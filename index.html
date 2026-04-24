@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Linktree</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: radial-gradient(circle at top, #0f172a, #020617);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .bg-video {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        overflow: hidden;
+        background: radial-gradient(circle at top, #0f172a, #020617);
+      }
+
+      .bg-video video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(1.05) contrast(1.05);
+      }
+
+      .bg-video .overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.82));
+      }
+
+      .container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .profile .avatar-ball {
+        width: 118px;
+        height: 118px;
+        margin: 0 auto 15px;
+        padding: 4px;
+        border-radius: 50%;
+        border: 3px solid #0b0f1a;
+        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.22), transparent 46%),
+          linear-gradient(to bottom, #ef4444 0 48%, #0b0f1a 48% 52%, #f8fafc 52% 100%);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      .profile .avatar-ball img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .profile h1 {
+        font-size: 22px;
+        font-weight: 600;
+        text-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+      }
+
+      .name-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .name-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      }
+
+      .verified {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(1px);
+      }
+
+      .verified svg {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+
+      .profile span {
+        color: #a78bfa;
+        font-size: 14px;
+      }
+
+      .profile p {
+        font-size: 13px;
+        opacity: 0.7;
+        margin: 10px 0 20px;
+      }
+
+      .text-tag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      }
+
+      .bio-tag {
+        display: inline-block;
+        max-width: 100%;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(2, 6, 23, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+      }
+
+      .link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        margin: 12px 0;
+        border-radius: 14px;
+        text-decoration: none;
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: 0.3s;
+      }
+
+      .link:hover {
+        transform: scale(1.04);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .icon img {
+        width: 22px;
+        height: 22px;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+
+      .pink {
+        background: linear-gradient(45deg, #ff00cc, #ff4d6d);
+      }
+
+      .purple {
+        background: linear-gradient(45deg, #7c3aed, #9333ea);
+      }
+
+      .blue {
+        background: linear-gradient(45deg, #2563eb, #06b6d4);
+      }
+
+      .green {
+        background: linear-gradient(45deg, #22c55e, #4ade80);
+      }
+
+      .orange {
+        background: linear-gradient(45deg, #f97316, #fb923c);
+      }
+
+      .yellow {
+        background: linear-gradient(45deg, #facc15, #f59e0b);
+      }
+
+      .text {
+        text-align: left;
+      }
+
+      .text h3 {
+        font-size: 15px;
+      }
+
+      .text p {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      footer {
+        margin-top: 20px;
+        font-size: 12px;
+        opacity: 0.5;
+      }
+
+      .admin-layout {
+        width: min(980px, 100%);
+        padding: 20px;
+        display: grid;
+        gap: 16px;
+      }
+
+      @media (min-width: 920px) {
+        .admin-layout {
+          grid-template-columns: 1fr 420px;
+          align-items: start;
+        }
+      }
+
+      .panel {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .panel h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .panel p {
+        font-size: 12px;
+        opacity: 0.75;
+      }
+
+      .grid {
+        margin-top: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        text-align: left;
+      }
+
+      .field label {
+        font-size: 12px;
+        opacity: 0.85;
+      }
+
+      .field input,
+      .field textarea,
+      .field select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(2, 6, 23, 0.55);
+        color: white;
+        outline: none;
+      }
+
+      .field textarea {
+        resize: vertical;
+        min-height: 74px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      @media (max-width: 520px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .field input[type="color"] {
+        height: 42px;
+        padding: 0;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .field input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      .field input[type="color"]::-webkit-color-swatch {
+        border: 0;
+        border-radius: 12px;
+      }
+
+      .field input[type="color"]::-moz-color-swatch {
+        border: 0;
+        border-radius: 12px;
+      }
+
+      .btns {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        transition: 0.2s;
+        font-size: 12px;
+      }
+
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .btn.primary {
+        border-color: rgba(167, 139, 250, 0.45);
+        background: rgba(167, 139, 250, 0.16);
+      }
+
+      .items {
+        margin-top: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .item {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 14px;
+        padding: 12px;
+      }
+
+      .item-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .item-title {
+        font-size: 13px;
+        font-weight: 600;
+        opacity: 0.95;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 180px;
+      }
+
+      .item-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .order-input {
+        width: 86px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(2, 6, 23, 0.55);
+        color: white;
+        outline: none;
+      }
+
+      .pill {
+        font-size: 11px;
+        opacity: 0.75;
+        padding: 6px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .file-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .file-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const API_BASE = "https://xwcmpgvhtryhykqjqzbe.functions.supabase.co/linktree-admin";
+      const ADMIN_USERNAME = "admin";
+
+      const defaultConfig = {
+        backgroundVideoUrl: "",
+        profile: {
+          imageUrl: "https://i.pravatar.cc/150?img=12",
+          name: "Seu Nome",
+          role: "Criador de Conteúdo",
+          bio: "Compartilhando ideias, vídeos e projetos 🚀",
+        },
+        footerText: "Feito com 💜",
+        isVerified: true,
+        links: [
+          {
+            order: 1,
+            title: "Meu Treinamento",
+            subtitle: "Aprenda comigo",
+            href: "#",
+            icon: "🎓",
+            iconImageUrl: "",
+            color: "#ff4d6d",
+          },
+          {
+            order: 2,
+            title: "YouTube",
+            subtitle: "Tutoriais semanais",
+            href: "#",
+            icon: "▶",
+            iconImageUrl: "",
+            color: "#9333ea",
+          },
+          {
+            order: 3,
+            title: "E-books",
+            subtitle: "Baixe grátis",
+            href: "#",
+            icon: "📘",
+            iconImageUrl: "",
+            color: "#06b6d4",
+          },
+          {
+            order: 4,
+            title: "WhatsApp",
+            subtitle: "Entre no grupo",
+            href: "#",
+            icon: "💬",
+            iconImageUrl: "",
+            color: "#4ade80",
+          },
+          {
+            order: 5,
+            title: "Loja",
+            subtitle: "Meus produtos",
+            href: "#",
+            icon: "🛒",
+            iconImageUrl: "",
+            color: "#fb923c",
+          },
+          {
+            order: 6,
+            title: "Mentoria",
+            subtitle: "Fale comigo",
+            href: "#",
+            icon: "👤",
+            iconImageUrl: "",
+            color: "#f59e0b",
+          },
+        ],
+      };
+
+      function normalizeConfig(input) {
+        const safe = typeof input === "object" && input ? input : {};
+        const profile = typeof safe.profile === "object" && safe.profile ? safe.profile : {};
+        const links = Array.isArray(safe.links) ? safe.links : [];
+
+        return {
+          backgroundVideoUrl:
+            typeof safe.backgroundVideoUrl === "string" ? safe.backgroundVideoUrl.trim() : "",
+          profile: {
+            imageUrl:
+              typeof profile.imageUrl === "string" && profile.imageUrl.trim()
+                ? profile.imageUrl.trim()
+                : defaultConfig.profile.imageUrl,
+            name:
+              typeof profile.name === "string" && profile.name.trim()
+                ? profile.name.trim()
+                : defaultConfig.profile.name,
+            role:
+              typeof profile.role === "string" && profile.role.trim()
+                ? profile.role.trim()
+                : defaultConfig.profile.role,
+            bio:
+              typeof profile.bio === "string" && profile.bio.trim()
+                ? profile.bio.trim()
+                : defaultConfig.profile.bio,
+          },
+          footerText:
+            typeof safe.footerText === "string" && safe.footerText.trim()
+              ? safe.footerText.trim()
+              : defaultConfig.footerText,
+          isVerified: typeof safe.isVerified === "boolean" ? safe.isVerified : true,
+          links:
+            links.length > 0
+              ? links
+                  .map((l) => (typeof l === "object" && l ? l : {}))
+                  .map((l, index) => {
+                    const rawOrder = "order" in l ? l.order : "position" in l ? l.position : index + 1;
+                    const parsedOrder = Number.parseInt(String(rawOrder), 10);
+
+                    return {
+                      order: Number.isFinite(parsedOrder) ? parsedOrder : index + 1,
+                      title: typeof l.title === "string" ? l.title : "",
+                      subtitle: typeof l.subtitle === "string" ? l.subtitle : "",
+                      href: typeof l.href === "string" ? l.href : "#",
+                      icon: typeof l.icon === "string" ? l.icon : "🔗",
+                      iconImageUrl: typeof l.iconImageUrl === "string" ? l.iconImageUrl : "",
+                      color: typeof l.color === "string" ? l.color : "#9333ea",
+                    };
+                  })
+              : defaultConfig.links.slice(),
+        };
+      }
+
+      let appConfig = normalizeConfig(defaultConfig);
+      let configLoaded = false;
+      let configLoadPromise = null;
+      let adminPassword = "";
+      let lastLoginError = "";
+
+      async function fetchJson(url, init) {
+        const res = await fetch(url, {
+          ...init,
+          headers: {
+            "Content-Type": "application/json",
+            ...(init && init.headers ? init.headers : {}),
+          },
+        });
+        const data = await res.json().catch(() => null);
+        return { ok: res.ok, status: res.status, data };
+      }
+
+      async function uploadBackgroundVideoFromFile(file) {
+        const form = new FormData();
+        form.append("username", ADMIN_USERNAME);
+        form.append("password", adminPassword);
+        form.append("file", file);
+
+        const res = await fetch(`${API_BASE}/admin/upload-background`, {
+          method: "POST",
+          body: form,
+        });
+        const data = await res.json().catch(() => null);
+        return { ok: res.ok, status: res.status, data };
+      }
+
+      async function loadPublicConfigFromServer() {
+        const { ok, data } = await fetchJson(`${API_BASE}/public`, { method: "GET" });
+        if (!ok || !data || typeof data !== "object") throw new Error("Falha ao carregar dados");
+        appConfig = normalizeConfig(data.config);
+        configLoaded = true;
+      }
+
+      function ensureConfigLoaded() {
+        if (configLoaded) return Promise.resolve();
+        if (configLoadPromise) return configLoadPromise;
+        configLoadPromise = loadPublicConfigFromServer()
+          .catch(() => {
+            configLoaded = true;
+            appConfig = normalizeConfig(defaultConfig);
+          })
+          .finally(() => {
+            renderApp();
+          });
+        return configLoadPromise;
+      }
+
+      function isAdminRoute() {
+        return window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function readRawFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(reader.error || new Error("Falha ao ler arquivo"));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error("Falha ao processar imagem"));
+          img.src = src;
+        });
+      }
+
+      async function readFileAsDataUrl(file) {
+        const raw = await readRawFileAsDataUrl(file);
+        const type = String(file && file.type ? file.type : "");
+        if (!type.startsWith("image/")) return raw;
+
+        try {
+          const img = await loadImage(raw);
+          const maxBytes = 350_000;
+          const attempts = [
+            { maxDim: 512, type: "image/webp", quality: 0.85 },
+            { maxDim: 512, type: "image/jpeg", quality: 0.82 },
+            { maxDim: 384, type: "image/webp", quality: 0.82 },
+            { maxDim: 384, type: "image/jpeg", quality: 0.78 },
+          ];
+
+          for (const attempt of attempts) {
+            const maxDim = attempt.maxDim;
+            const iw = Number(img.naturalWidth || img.width || 0);
+            const ih = Number(img.naturalHeight || img.height || 0);
+            if (!iw || !ih) continue;
+
+            const scale = Math.min(1, maxDim / Math.max(iw, ih));
+            const w = Math.max(1, Math.round(iw * scale));
+            const h = Math.max(1, Math.round(ih * scale));
+
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) continue;
+            ctx.drawImage(img, 0, 0, w, h);
+
+            let out = canvas.toDataURL(attempt.type, attempt.quality);
+            if (!out || typeof out !== "string") continue;
+            if (out.length <= maxBytes) return out;
+
+            let quality = attempt.quality;
+            while (out.length > maxBytes && quality > 0.5) {
+              quality = Number((quality - 0.08).toFixed(2));
+              out = canvas.toDataURL(attempt.type, quality);
+            }
+            if (out.length <= maxBytes) return out;
+          }
+
+          return raw;
+        } catch {
+          return raw;
+        }
+      }
+
+      function isHexColor(value) {
+        return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value || "").trim());
+      }
+
+      function toHexColor(value) {
+        const v = String(value || "").trim();
+        if (isHexColor(v)) return v;
+        const map = {
+          pink: "#ff4d6d",
+          purple: "#9333ea",
+          blue: "#06b6d4",
+          green: "#4ade80",
+          orange: "#fb923c",
+          yellow: "#f59e0b",
+        };
+        return map[v] || "#9333ea";
+      }
+
+      function renderPublic(config) {
+        const linksForRender = config.links
+          .slice()
+          .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+        const linksHtml = linksForRender
+          .map((link) => {
+            const href = link.href && link.href.trim() ? link.href.trim() : "#";
+            const icon = link.icon && link.icon.trim() ? link.icon.trim() : "🔗";
+            const iconImageUrl =
+              typeof link.iconImageUrl === "string" && link.iconImageUrl.trim()
+                ? link.iconImageUrl.trim()
+                : "";
+            const color = link.color && link.color.trim() ? link.color.trim() : "purple";
+            const title = link.title && link.title.trim() ? link.title.trim() : "Link";
+            const subtitle = link.subtitle && link.subtitle.trim() ? link.subtitle.trim() : "";
+            const iconHtml = iconImageUrl
+              ? `<img src="${escapeHtml(iconImageUrl)}" alt="" />`
+              : escapeHtml(icon);
+            const iconClass = isHexColor(color) ? "" : ` ${escapeHtml(color)}`;
+            const iconStyle = isHexColor(color) ? ` style="background: ${escapeHtml(color)};"` : "";
+
+            return `
+              <a href="${escapeHtml(href)}" class="link" target="${href.startsWith("http") ? "_blank" : "_self"}" rel="noreferrer">
+                <div class="left">
+                  <div class="icon${iconClass}"${iconStyle}>${iconHtml}</div>
+                  <div class="text">
+                    <h3>${escapeHtml(title)}</h3>
+                    <p>${escapeHtml(subtitle)}</p>
+                  </div>
+                </div>
+                <span aria-hidden="true">➜</span>
+              </a>
+            `;
+          })
+          .join("");
+
+        const backgroundVideoUrl =
+          config && typeof config === "object" && typeof config.backgroundVideoUrl === "string"
+            ? config.backgroundVideoUrl.trim()
+            : "";
+
+        const backgroundHtml = backgroundVideoUrl
+          ? `
+            <div class="bg-video" aria-hidden="true">
+              <video src="${escapeHtml(backgroundVideoUrl)}" autoplay muted loop playsinline preload="metadata"></video>
+              <div class="overlay"></div>
+            </div>
+          `
+          : "";
+
+        return `
+          ${backgroundHtml}
+          <div style="width: 100%; display: grid; place-items: center;">
+            <div class="container">
+              <div class="profile">
+                <div class="avatar-ball">
+                  <img src="${escapeHtml(config.profile.imageUrl)}" alt="Foto de perfil" />
+                </div>
+                <div class="name-row">
+                  <div class="name-tag">
+                    <h1>${escapeHtml(config.profile.name)}</h1>
+                    ${
+                      config.isVerified
+                        ? `<span class="verified" role="img" aria-label="Verificado">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" fill="#1d9bf0"></circle>
+                      <path
+                        d="M10.2 13.3l-1.5-1.5a1 1 0 10-1.4 1.4l2.2 2.2a1 1 0 001.4 0l5.8-5.8a1 1 0 10-1.4-1.4l-5.1 5.1z"
+                        fill="#ffffff"
+                      ></path>
+                    </svg>
+                  </span>`
+                        : ""
+                    }
+                  </div>
+                </div>
+                <span class="text-tag">${escapeHtml(config.profile.role)}</span>
+                <p class="bio-tag">${escapeHtml(config.profile.bio)}</p>
+              </div>
+              ${linksHtml}
+              <footer>${escapeHtml(config.footerText)}</footer>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderAdminGate() {
+        return `
+          <div class="admin-layout">
+            <div class="panel">
+              <h2>Admin</h2>
+              <p>Digite a senha para editar seus links.</p>
+              <form id="loginForm" class="grid" autocomplete="off">
+                <div class="field">
+                  <label for="password">Senha</label>
+                  <input id="password" name="password" type="password" placeholder="Senha" required />
+                </div>
+                <div class="btns">
+                  <button class="btn primary" type="submit">Entrar</button>
+                  <a class="btn" href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Voltar</a>
+                </div>
+                <p id="loginError" style="display:${lastLoginError ? "block" : "none"}; color: rgba(255,255,255,0.85); background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.25); padding: 10px 12px; border-radius: 12px;">${escapeHtml(
+                  lastLoginError || "Senha inválida.",
+                )}</p>
+              </form>
+            </div>
+            <div class="panel">
+              <h2>Prévia</h2>
+              <p>Depois de entrar, você edita e vê o resultado aqui.</p>
+              <div class="pill">Rota: /admin</div>
+            </div>
+          </div>
+        `;
+      }
+
+      function createEmptyLink() {
+        return {
+          order: 1,
+          title: "Novo Link",
+          subtitle: "Descrição",
+          href: "#",
+          icon: "🔗",
+          iconImageUrl: "",
+          color: "#9333ea",
+        };
+      }
+
+      function sortLinksInPlace(links) {
+        const withIndex = links.map((l, index) => ({ l, index }));
+        withIndex.sort((a, b) => {
+          const ao = Number(a.l.order) || 0;
+          const bo = Number(b.l.order) || 0;
+          if (ao !== bo) return ao - bo;
+          return a.index - b.index;
+        });
+        links.length = 0;
+        withIndex.forEach((x) => links.push(x.l));
+      }
+
+      function renumberOrders(links) {
+        links.forEach((l, idx) => {
+          l.order = idx + 1;
+        });
+      }
+
+      function renderAdminEditor(config) {
+        const itemsHtml = config.links
+          .map((l, idx) => {
+            const title = l.title && l.title.trim() ? l.title.trim() : `Link ${idx + 1}`;
+            return `
+              <div class="item" data-index="${idx}">
+                <div class="item-head">
+                  <div class="item-title">${escapeHtml(title)}</div>
+                  <div class="item-actions">
+                    <input class="order-input" type="number" min="1" step="1" value="${escapeHtml(String(l.order ?? idx + 1))}" data-field="order" data-index="${idx}" aria-label="Posição" />
+                    <button class="btn" type="button" data-action="removeLink" data-index="${idx}">Remover</button>
+                  </div>
+                </div>
+                <div class="grid">
+                  <div class="row">
+                    <div class="field">
+                      <label>Título</label>
+                      <input type="text" value="${escapeHtml(l.title)}" data-field="title" data-index="${idx}" />
+                    </div>
+                    <div class="field">
+                      <label>Ícone (emoji ou texto)</label>
+                      <input type="text" value="${escapeHtml(l.icon)}" data-field="icon" data-index="${idx}" />
+                      <div class="file-row" style="margin-top: 8px;">
+                        <input class="file-input" id="iconFile_${idx}" type="file" accept="image/*" data-action="uploadIcon" data-index="${idx}" />
+                        <label class="btn" for="iconFile_${idx}">Subir imagem</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label>Subtítulo</label>
+                      <input type="text" value="${escapeHtml(l.subtitle)}" data-field="subtitle" data-index="${idx}" />
+                    </div>
+                    <div class="field">
+                      <label>Cor</label>
+                      <input type="color" value="${escapeHtml(toHexColor(l.color))}" data-field="color" data-index="${idx}" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Link (URL)</label>
+                    <input type="url" value="${escapeHtml(l.href)}" data-field="href" data-index="${idx}" />
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+        return `
+          <div class="admin-layout">
+            <div class="panel">
+              <h2>Editor</h2>
+              <p>As alterações ficam salvas no Supabase.</p>
+
+              <div class="grid">
+                <div class="field">
+                  <label>Vídeo de fundo (URL .mp4/.webm)</label>
+                  <input id="backgroundVideoUrl" type="url" value="${escapeHtml(config.backgroundVideoUrl || "")}" placeholder="https://.../video.mp4" />
+                  <div class="file-row" style="margin-top: 8px;">
+                    <input class="file-input" id="backgroundVideoFile" type="file" accept="video/mp4,video/webm,video/*" />
+                    <label class="btn" for="backgroundVideoFile">Subir vídeo</label>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Foto do perfil</label>
+                  <input id="profileImageUrl" type="url" value="${escapeHtml(config.profile.imageUrl)}" />
+                  <div class="file-row" style="margin-top: 8px;">
+                    <input class="file-input" id="profileImageFile" type="file" accept="image/*" />
+                    <label class="btn" for="profileImageFile">Subir imagem</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="field">
+                    <label>Nome</label>
+                    <input id="profileName" type="text" value="${escapeHtml(config.profile.name)}" />
+                  </div>
+                  <div class="field">
+                    <label>Cargo/Tag</label>
+                    <input id="profileRole" type="text" value="${escapeHtml(config.profile.role)}" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Bio</label>
+                  <textarea id="profileBio">${escapeHtml(config.profile.bio)}</textarea>
+                </div>
+                <div class="field">
+                  <label>Rodapé</label>
+                  <input id="footerText" type="text" value="${escapeHtml(config.footerText)}" />
+                </div>
+              </div>
+
+              <div class="btns">
+                <button class="btn primary" type="button" id="saveBtn">Salvar</button>
+                <button class="btn" type="button" id="addLinkBtn">Adicionar botão</button>
+                <button class="btn" type="button" id="resetBtn">Resetar</button>
+                <a class="btn" href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Ver público</a>
+                <button class="btn" type="button" id="logoutBtn">Sair</button>
+              </div>
+
+              <div class="items" id="items">
+                ${itemsHtml}
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2>Prévia</h2>
+              <div id="preview"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      function attachAdminGateHandlers() {
+        const form = document.getElementById("loginForm");
+        const password = document.getElementById("password");
+        const error = document.getElementById("loginError");
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          lastLoginError = "";
+          error.style.display = "none";
+          const value = password.value || "";
+
+          const btn = form.querySelector("button[type='submit']");
+          if (btn instanceof HTMLButtonElement) btn.disabled = true;
+
+          try {
+            const { ok, data } = await fetchJson(`${API_BASE}/admin/verify`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: value }),
+            });
+
+            if (!ok || !data || data.ok !== true) {
+              lastLoginError = "Senha inválida.";
+              error.style.display = "block";
+              password.value = "";
+              password.focus();
+              return;
+            }
+
+            adminPassword = value;
+            const loaded = await fetchJson(`${API_BASE}/admin/get`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword }),
+            });
+            if (loaded.ok && loaded.data && typeof loaded.data === "object") {
+              appConfig = normalizeConfig(loaded.data.config);
+              configLoaded = true;
+            }
+            renderApp();
+          } catch {
+            lastLoginError = "Falha ao conectar no Supabase.";
+            error.style.display = "block";
+          } finally {
+            if (btn instanceof HTMLButtonElement) btn.disabled = false;
+          }
+        });
+      }
+
+      function getEditorStateFromDOM(config) {
+        const next = structuredClone(config);
+        const backgroundInput = document.getElementById("backgroundVideoUrl");
+        if (backgroundInput instanceof HTMLInputElement) {
+          next.backgroundVideoUrl = backgroundInput.value.trim();
+        }
+        next.profile.imageUrl = document.getElementById("profileImageUrl").value.trim();
+        next.profile.name = document.getElementById("profileName").value.trim();
+        next.profile.role = document.getElementById("profileRole").value.trim();
+        next.profile.bio = document.getElementById("profileBio").value.trim();
+        next.footerText = document.getElementById("footerText").value.trim();
+
+        const fields = document.querySelectorAll("[data-field][data-index]");
+        fields.forEach((el) => {
+          const idx = Number(el.getAttribute("data-index"));
+          const field = el.getAttribute("data-field");
+          if (!Number.isFinite(idx) || idx < 0 || idx >= next.links.length) return;
+          if (!field) return;
+          next.links[idx][field] = el.value;
+        });
+
+        return normalizeConfig(next);
+      }
+
+      function updatePreview(config) {
+        const preview = document.getElementById("preview");
+        if (!preview) return;
+        preview.innerHTML = renderPublic(config);
+      }
+
+      function attachAdminEditorHandlers(config) {
+        let state = normalizeConfig(config);
+        updatePreview(state);
+
+        const previewRefresh = () => {
+          state = getEditorStateFromDOM(state);
+          updatePreview(state);
+        };
+
+        const bgInput = document.getElementById("backgroundVideoUrl");
+        if (bgInput) bgInput.addEventListener("input", previewRefresh);
+        const bgFile = document.getElementById("backgroundVideoFile");
+        if (bgFile) {
+          bgFile.addEventListener("change", async (e) => {
+            const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+            if (!file) return;
+            try {
+              if (!adminPassword) throw new Error("Sem senha");
+              const { ok, status, data } = await uploadBackgroundVideoFromFile(file);
+              if (!ok || !data || typeof data !== "object" || typeof data.url !== "string" || !data.url) {
+                const message =
+                  data && typeof data === "object" && "error" in data && typeof data.error === "string"
+                    ? data.error
+                    : `Falha ao subir vídeo. (status ${status})`;
+                throw new Error(message);
+              }
+              state = getEditorStateFromDOM(state);
+              state.backgroundVideoUrl = data.url;
+              appConfig = state;
+              configLoaded = true;
+              renderApp();
+            } catch (err) {
+              window.alert(err instanceof Error ? err.message : "Falha ao subir vídeo.");
+            } finally {
+              e.target.value = "";
+            }
+          });
+        }
+        document.getElementById("profileImageUrl").addEventListener("input", previewRefresh);
+        document.getElementById("profileImageFile").addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+          if (!file) return;
+          const dataUrl = await readFileAsDataUrl(file);
+          state = getEditorStateFromDOM(state);
+          state.profile.imageUrl = dataUrl;
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+          e.target.value = "";
+        });
+        document.getElementById("profileName").addEventListener("input", previewRefresh);
+        document.getElementById("profileRole").addEventListener("input", previewRefresh);
+        document.getElementById("profileBio").addEventListener("input", previewRefresh);
+        document.getElementById("footerText").addEventListener("input", previewRefresh);
+
+        document.getElementById("items").addEventListener("input", previewRefresh);
+        document.getElementById("items").addEventListener("change", previewRefresh);
+        document.getElementById("items").addEventListener("change", (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLInputElement)) return;
+          if (target.getAttribute("data-field") !== "order") return;
+          state = getEditorStateFromDOM(state);
+          sortLinksInPlace(state.links);
+          renumberOrders(state.links);
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+        });
+        document.getElementById("items").addEventListener("change", async (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLInputElement)) return;
+          if (target.type !== "file") return;
+          if (target.getAttribute("data-action") !== "uploadIcon") return;
+          const idx = Number(target.getAttribute("data-index"));
+          if (!Number.isFinite(idx)) return;
+          const file = target.files && target.files[0] ? target.files[0] : null;
+          if (!file) return;
+          const dataUrl = await readFileAsDataUrl(file);
+          state = getEditorStateFromDOM(state);
+          if (!state.links[idx]) return;
+          state.links[idx].iconImageUrl = dataUrl;
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+          target.value = "";
+        });
+
+        document.getElementById("items").addEventListener("click", (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLElement)) return;
+          const action = target.getAttribute("data-action");
+          if (action !== "removeLink") return;
+          const idx = Number(target.getAttribute("data-index"));
+          if (!Number.isFinite(idx)) return;
+          state = getEditorStateFromDOM(state);
+          state.links.splice(idx, 1);
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+        });
+
+        document.getElementById("addLinkBtn").addEventListener("click", () => {
+          state = getEditorStateFromDOM(state);
+          const maxOrder = state.links.reduce((acc, l) => Math.max(acc, Number(l.order) || 0), 0);
+          const next = createEmptyLink();
+          next.order = maxOrder + 1;
+          state.links.push(next);
+          sortLinksInPlace(state.links);
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+          state = getEditorStateFromDOM(state);
+          updatePreview(state);
+
+          const btn = document.getElementById("saveBtn");
+          if (btn instanceof HTMLButtonElement) {
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
+          }
+
+          try {
+            if (!adminPassword) throw new Error("Sem senha");
+            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
+            });
+            if (!ok || !data || data.ok !== true) {
+              const message =
+                data && typeof data === "object" && "error" in data && typeof data.error === "string"
+                  ? data.error
+                  : `Falha ao salvar no Supabase. (status ${status})`;
+              throw new Error(message);
+            }
+            appConfig = state;
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : "Falha ao salvar no Supabase.");
+          } finally {
+            if (btn instanceof HTMLButtonElement) {
+              btn.disabled = false;
+              btn.textContent = "Salvar";
+            }
+          }
+        });
+
+        document.getElementById("resetBtn").addEventListener("click", async () => {
+          state = normalizeConfig(defaultConfig);
+          updatePreview(state);
+          const btn = document.getElementById("resetBtn");
+          if (btn instanceof HTMLButtonElement) btn.disabled = true;
+
+          try {
+            if (!adminPassword) throw new Error("Sem senha");
+            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
+            });
+            if (!ok || !data || data.ok !== true) {
+              const message =
+                data && typeof data === "object" && "error" in data && typeof data.error === "string"
+                  ? data.error
+                  : `Falha ao resetar no Supabase. (status ${status})`;
+              throw new Error(message);
+            }
+            appConfig = state;
+            renderApp();
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : "Falha ao resetar no Supabase.");
+          } finally {
+            if (btn instanceof HTMLButtonElement) btn.disabled = false;
+          }
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          adminPassword = "";
+          renderApp();
+        });
+      }
+
+      function renderApp() {
+        const app = document.getElementById("app");
+        ensureConfigLoaded();
+        const config = appConfig;
+
+        if (!isAdminRoute()) {
+          if (!configLoaded) {
+            app.innerHTML = `
+              <div style="width: 100%; display: grid; place-items: center;">
+                <div class="container">
+                  <div class="profile">
+                    <h1>Carregando…</h1>
+                    <p>Buscando dados no Supabase.</p>
+                  </div>
+                </div>
+              </div>
+            `;
+            return;
+          }
+          app.innerHTML = renderPublic(config);
+          return;
+        }
+
+        if (!adminPassword) {
+          app.innerHTML = renderAdminGate();
+          attachAdminGateHandlers();
+          return;
+        }
+
+        app.innerHTML = renderAdminEditor(config);
+        attachAdminEditorHandlers(config);
+      }
+
+      ensureConfigLoaded();
+      renderApp();
+      window.addEventListener("popstate", renderApp);
+    </script>
+  </body>
+</html>
