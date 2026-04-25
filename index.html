@@ -440,6 +440,111 @@
         align-items: center;
         flex-wrap: wrap;
       }
+
+      /* Estilos para a página de séries */
+      .series-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .series-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: left;
+      }
+
+      .series-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .series-thumb {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #1e293b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .series-info {
+        padding: 10px;
+      }
+
+      .series-info h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .series-info p {
+        font-size: 11px;
+        opacity: 0.6;
+      }
+
+      .video-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .video-item {
+        display: flex;
+        gap: 12px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        text-decoration: none;
+        color: white;
+        transition: 0.2s;
+        align-items: center;
+      }
+
+      .video-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .video-thumb {
+        width: 100px;
+        height: 56px;
+        background: #1e293b;
+        border-radius: 4px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .video-details h4 {
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+
+      .video-details p {
+        font-size: 11px;
+        opacity: 0.6;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: 0.2s;
+        font-size: 14px;
+      }
+
+      .back-btn:hover {
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
@@ -459,6 +564,28 @@
         },
         footerText: "Feito com 💜",
         isVerified: true,
+        series: [
+          {
+            id: "1",
+            title: "Dicas de Programação",
+            description: "Aprenda truques e atalhos",
+            icon: "💻",
+            videos: [
+              { title: "VS Code Setup", duration: "10:20", url: "#" },
+              { title: "Git para Iniciantes", duration: "15:45", url: "#" },
+            ],
+          },
+          {
+            id: "2",
+            title: "Vlogs de Viagem",
+            description: "Conhecendo o mundo",
+            icon: "✈️",
+            videos: [
+              { title: "Explorando o Japão", duration: "22:10", url: "#" },
+              { title: "Um dia em Paris", duration: "18:30", url: "#" },
+            ],
+          },
+        ],
         links: [
           {
             order: 1,
@@ -521,6 +648,7 @@
         const safe = typeof input === "object" && input ? input : {};
         const profile = typeof safe.profile === "object" && safe.profile ? safe.profile : {};
         const links = Array.isArray(safe.links) ? safe.links : [];
+        const series = Array.isArray(safe.series) ? safe.series : [];
 
         return {
           backgroundVideoUrl:
@@ -548,6 +676,22 @@
               ? safe.footerText.trim()
               : defaultConfig.footerText,
           isVerified: typeof safe.isVerified === "boolean" ? safe.isVerified : true,
+          series:
+            series.length > 0
+              ? series.map((s) => ({
+                  id: String(s.id || Math.random()),
+                  title: String(s.title || ""),
+                  description: String(s.description || ""),
+                  icon: String(s.icon || "📺"),
+                  videos: Array.isArray(s.videos)
+                    ? s.videos.map((v) => ({
+                        title: String(v.title || ""),
+                        duration: String(v.duration || ""),
+                        url: String(v.url || "#"),
+                      }))
+                    : [],
+                }))
+              : defaultConfig.series.slice(),
           links:
             links.length > 0
               ? links
@@ -625,6 +769,15 @@
 
       function isAdminRoute() {
         return window.location.pathname === "/admin" || window.location.pathname.startsWith("/admin/");
+      }
+
+      function isSeriesRoute() {
+        return window.location.pathname === "/series" || window.location.pathname.startsWith("/series/");
+      }
+
+      function navigateTo(path) {
+        window.history.pushState({}, "", path);
+        renderApp();
       }
 
       function escapeHtml(value) {
@@ -802,8 +955,100 @@
                 <span class="text-tag">${escapeHtml(config.profile.role)}</span>
                 <p class="bio-tag">${escapeHtml(config.profile.bio)}</p>
               </div>
+              
+              <a href="javascript:void(0)" onclick="navigateTo('/series')" class="link" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167, 139, 250, 0.4);">
+                <div class="left">
+                  <div class="icon purple">📺</div>
+                  <div class="text">
+                    <h3>Séries do Canal</h3>
+                    <p>Assista às nossas séries exclusivas</p>
+                  </div>
+                </div>
+                <span aria-hidden="true">➜</span>
+              </a>
+
               ${linksHtml}
               <footer>${escapeHtml(config.footerText)}</footer>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSeries(config) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const seriesId = urlParams.get("id");
+
+        if (seriesId) {
+          const serie = config.series.find((s) => s.id === seriesId);
+          if (!serie) {
+            return `
+              <div style="width: 100%; display: grid; place-items: center;">
+                <div class="container">
+                  <div class="back-btn" onclick="navigateTo('/series')">⬅ Voltar para Séries</div>
+                  <h2>Série não encontrada</h2>
+                </div>
+              </div>
+            `;
+          }
+
+          const videosHtml = serie.videos
+            .map(
+              (v) => `
+            <a href="${escapeHtml(v.url)}" class="video-item" target="_blank">
+              <div class="video-thumb">▶</div>
+              <div class="video-details">
+                <h4>${escapeHtml(v.title)}</h4>
+                <p>${escapeHtml(v.duration)}</p>
+              </div>
+            </a>
+          `,
+            )
+            .join("");
+
+          return `
+            <div style="width: 100%; display: grid; place-items: center;">
+              <div class="container">
+                <div class="back-btn" onclick="navigateTo('/series')">⬅ Voltar para Séries</div>
+                <div class="profile">
+                  <div class="avatar-ball" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px;">
+                    ${escapeHtml(serie.icon)}
+                  </div>
+                  <h1>${escapeHtml(serie.title)}</h1>
+                  <p>${escapeHtml(serie.description)}</p>
+                </div>
+                <div class="video-list">
+                  ${videosHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        const seriesHtml = config.series
+          .map(
+            (s) => `
+          <div class="series-card" onclick="navigateTo('/series?id=${s.id}')">
+            <div class="series-thumb">${escapeHtml(s.icon)}</div>
+            <div class="series-info">
+              <h4>${escapeHtml(s.title)}</h4>
+              <p>${escapeHtml(s.description)}</p>
+            </div>
+          </div>
+        `,
+          )
+          .join("");
+
+        return `
+          <div style="width: 100%; display: grid; place-items: center;">
+            <div class="container">
+              <div class="back-btn" onclick="navigateTo('/')">⬅ Voltar ao Linktree</div>
+              <div class="profile">
+                <h1>Séries do Canal</h1>
+                <p>Escolha uma série para ver os episódios</p>
+              </div>
+              <div class="series-grid">
+                ${seriesHtml}
+              </div>
             </div>
           </div>
         `;
@@ -1244,6 +1489,11 @@
         const config = appConfig;
 
         if (!isAdminRoute()) {
+          if (isSeriesRoute()) {
+            app.innerHTML = renderSeries(config);
+            return;
+          }
+
           if (!configLoaded) {
             app.innerHTML = `
               <div style="width: 100%; display: grid; place-items: center;">
