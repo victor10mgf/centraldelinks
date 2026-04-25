@@ -1101,7 +1101,7 @@
           : "";
       }
 
-      function renderAdminGate() {
+      function renderAdminGate(config) {
         return `
           ${renderBackground(config)}
           <div class="admin-layout" style="position: relative; z-index: 1;">
@@ -1745,7 +1745,7 @@
         }
 
         if (!adminPassword) {
-          app.innerHTML = renderAdminGate();
+          app.innerHTML = renderAdminGate(config);
           attachAdminGateHandlers();
           return;
         }
