@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meu Linktree</title>
+    <title>Meus Links</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><defs><radialGradient id='g' cx='40%25' cy='30%25' r='70%25'><stop offset='0%25' stop-color='white' stop-opacity='.35'/><stop offset='60%25' stop-color='white' stop-opacity='0'/></radialGradient><linearGradient id='red' x1='0' y1='0' x2='0' y2='1'><stop offset='0%25' stop-color='%23ff6b6b'/><stop offset='100%25' stop-color='%23ef4444'/></linearGradient><linearGradient id='gray' x1='0' y1='0' x2='0' y2='1'><stop offset='0%25' stop-color='%23f8fafc'/><stop offset='100%25' stop-color='%23e5e7eb'/></linearGradient></defs><circle cx='64' cy='64' r='58' fill='url(%23gray)' stroke='%23000000' stroke-width='8'/><path d='M6 64a58 58 0 0 1 116 0' fill='url(%23red)'/><rect x='6' y='60' width='116' height='8' fill='%23000000'/><circle cx='64' cy='64' r='18' fill='%23ffffff' stroke='%23000000' stroke-width='8'/><circle cx='64' cy='64' r='8' fill='%23cbd5e1'/><circle cx='64' cy='64' r='58' fill='url(%23g)'/></svg>"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
       rel="stylesheet"
@@ -53,6 +57,44 @@
         max-width: 420px;
         padding: 20px;
         text-align: center;
+      }
+
+      .container.wide {
+        max-width: 600px;
+        padding: 0;
+      }
+
+      .container.wide > *:not(.full-width) {
+        padding: 0 20px;
+      }
+
+      .full-width {
+        width: 100%;
+        margin: 0;
+      }
+
+      .loading-pokeball {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 14px;
+        animation: loading-spin 1s linear infinite;
+        filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.35));
+        opacity: 0.95;
+      }
+
+      .loading-pokeball svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      @keyframes loading-spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .profile .avatar-ball {
@@ -450,9 +492,9 @@
       }
 
       .series-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
         overflow: hidden;
         cursor: pointer;
         transition: 0.3s;
@@ -461,29 +503,27 @@
 
       .series-card:hover {
         transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.1);
+        opacity: 0.8;
       }
 
       .series-thumb {
         width: 100%;
-        aspect-ratio: 16/9;
-        background: #1e293b;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: block;
         font-size: 24px;
-        background-size: cover;
-        background-position: center;
+        overflow: hidden;
+        background: transparent;
       }
 
       .series-thumb img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        display: block;
+        border-radius: 0;
       }
 
       .series-info {
-        padding: 10px;
+        padding: 8px 0;
+        text-align: center;
       }
 
       .series-info h4 {
@@ -695,43 +735,41 @@
               ? safe.footerText.trim()
               : defaultConfig.footerText,
           isVerified: typeof safe.isVerified === "boolean" ? safe.isVerified : true,
-          series:
-            series.length > 0
-              ? series.map((s) => ({
-                  id: String(s.id || Math.random()),
-                  title: String(s.title || ""),
-                  description: String(s.description || ""),
-                  icon: String(s.icon || "📺"),
-                  coverUrl: String(s.coverUrl || ""),
-                  videos: Array.isArray(s.videos)
-                    ? s.videos.map((v) => ({
-                        title: String(v.title || ""),
-                        duration: String(v.duration || ""),
-                        url: String(v.url || "#"),
-                        thumbUrl: String(v.thumbUrl || ""),
-                      }))
-                    : [],
-                }))
-              : defaultConfig.series.slice(),
-          links:
-            links.length > 0
-              ? links
-                  .map((l) => (typeof l === "object" && l ? l : {}))
-                  .map((l, index) => {
-                    const rawOrder = "order" in l ? l.order : "position" in l ? l.position : index + 1;
-                    const parsedOrder = Number.parseInt(String(rawOrder), 10);
+          series: Array.isArray(safe.series)
+            ? safe.series.map((s) => ({
+                id: String(s.id || Date.now() + Math.random()),
+                title: String(s.title || ""),
+                description: String(s.description || ""),
+                icon: String(s.icon || "📺"),
+                coverUrl: String(s.coverUrl || ""),
+                videos: Array.isArray(s.videos)
+                  ? s.videos.map((v) => ({
+                      title: String(v.title || ""),
+                      duration: String(v.duration || ""),
+                      url: String(v.url || "#"),
+                      thumbUrl: String(v.thumbUrl || ""),
+                    }))
+                  : [],
+              }))
+            : defaultConfig.series.slice(),
+          links: Array.isArray(safe.links)
+            ? safe.links
+                .map((l) => (typeof l === "object" && l ? l : {}))
+                .map((l, index) => {
+                  const rawOrder = "order" in l ? l.order : "position" in l ? l.position : index + 1;
+                  const parsedOrder = Number.parseInt(String(rawOrder), 10);
 
-                    return {
-                      order: Number.isFinite(parsedOrder) ? parsedOrder : index + 1,
-                      title: typeof l.title === "string" ? l.title : "",
-                      subtitle: typeof l.subtitle === "string" ? l.subtitle : "",
-                      href: typeof l.href === "string" ? l.href : "#",
-                      icon: typeof l.icon === "string" ? l.icon : "🔗",
-                      iconImageUrl: typeof l.iconImageUrl === "string" ? l.iconImageUrl : "",
-                      color: typeof l.color === "string" ? l.color : "#9333ea",
-                    };
-                  })
-              : defaultConfig.links.slice(),
+                  return {
+                    order: Number.isFinite(parsedOrder) ? parsedOrder : index + 1,
+                    title: typeof l.title === "string" ? l.title : "",
+                    subtitle: typeof l.subtitle === "string" ? l.subtitle : "",
+                    href: typeof l.href === "string" ? l.href : "#",
+                    icon: typeof l.icon === "string" ? l.icon : "🔗",
+                    iconImageUrl: typeof l.iconImageUrl === "string" ? l.iconImageUrl : "",
+                    color: typeof l.color === "string" ? l.color : "#9333ea",
+                  };
+                })
+            : defaultConfig.links.slice(),
         };
       }
 
@@ -740,6 +778,8 @@
       let configLoadPromise = null;
       let adminPassword = "";
       let lastLoginError = "";
+      let adminActiveTab = "main";
+      let adminSeriesPreviewSelectedId = null;
 
       async function fetchJson(url, init) {
         const res = await fetch(url, {
@@ -997,7 +1037,13 @@
 
       function renderSeries(config) {
         const urlParams = new URLSearchParams(window.location.search);
-        const seriesId = urlParams.get("id");
+        const querySeriesId = urlParams.get("id");
+        const pathname = window.location.pathname;
+        const pathSeriesId = pathname.startsWith("/series/") ? decodeURIComponent(pathname.slice("/series/".length)) : null;
+        const seriesId =
+          isAdminRoute() && adminActiveTab === "series"
+            ? adminSeriesPreviewSelectedId
+            : pathSeriesId || querySeriesId;
 
         if (seriesId) {
           const serie = config.series.find((s) => s.id === seriesId);
@@ -1005,7 +1051,11 @@
             return `
               <div style="width: 100%; display: grid; place-items: center;">
                 <div class="container">
-                  <div class="back-btn" onclick="navigateTo('/series')">⬅ Voltar para Séries</div>
+                  <div class="back-btn" onclick="${
+                    isAdminRoute() && adminActiveTab === "series"
+                      ? "window.__adminSeriesPreviewBack()"
+                      : "navigateTo('/series')"
+                  }">⬅ Voltar para Séries</div>
                   <h2>Série não encontrada</h2>
                 </div>
               </div>
@@ -1031,16 +1081,18 @@
           return `
             ${renderBackground(config)}
             <div style="width: 100%; display: grid; place-items: center; position: relative; z-index: 1;">
-              <div class="container">
-                <div class="back-btn" onclick="navigateTo('/series')">⬅ Voltar para Séries</div>
+              <div class="container wide">
+                <div class="back-btn" onclick="${
+                  isAdminRoute() && adminActiveTab === "series"
+                    ? "window.__adminSeriesPreviewBack()"
+                    : "navigateTo('/series')"
+                }">⬅ Voltar para Séries</div>
                 <div class="profile">
-                  <div class="avatar-ball" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px; overflow: hidden;">
-                    ${
-                      serie.coverUrl
-                        ? `<img src="${escapeHtml(serie.coverUrl)}" alt="" style="width: 100%; height: 100%; object-fit: cover;" />`
-                        : escapeHtml(serie.icon)
-                    }
-                  </div>
+                  ${
+                    serie.coverUrl
+                      ? `<div class="full-width"><img src="${escapeHtml(serie.coverUrl)}" alt="" style="width: 100%; height: auto; display: block; margin-bottom: 15px;" /></div>`
+                      : `<div class="avatar-ball" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px; overflow: hidden;">${escapeHtml(serie.icon)}</div>`
+                  }
                   <h1>${escapeHtml(serie.title)}</h1>
                   <p>${escapeHtml(serie.description)}</p>
                 </div>
@@ -1055,13 +1107,18 @@
         const seriesHtml = config.series
           .map(
             (s) => `
-          <div class="series-card" onclick="navigateTo('/series?id=${s.id}')">
+          <div class="series-card" role="button" aria-label="${escapeHtml(
+            s.title || "Abrir série",
+          )}" title="${escapeHtml(s.title)}" onclick='${
+            isAdminRoute() && adminActiveTab === "series"
+              ? `window.__adminSeriesPreviewSelect(${JSON.stringify(s.id)})`
+              : `navigateTo("/series/${encodeURIComponent(s.id)}")`
+          }'>
             <div class="series-thumb">
               ${s.coverUrl ? `<img src="${escapeHtml(s.coverUrl)}" alt="" />` : escapeHtml(s.icon)}
             </div>
             <div class="series-info">
               <h4>${escapeHtml(s.title)}</h4>
-              <p>${escapeHtml(s.description)}</p>
             </div>
           </div>
         `,
@@ -1071,7 +1128,7 @@
         return `
           ${renderBackground(config)}
           <div style="width: 100%; display: grid; place-items: center; position: relative; z-index: 1;">
-            <div class="container">
+            <div class="container wide">
               <div class="back-btn" onclick="navigateTo('/')">⬅ Voltar ao Linktree</div>
               <div class="profile">
                 <h1>Séries do Canal</h1>
@@ -1162,6 +1219,33 @@
       }
 
       function renderAdminEditor(config) {
+        if (adminActiveTab === "main") {
+          return `
+            ${renderBackground(config)}
+            <div class="admin-layout" style="position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+              <div class="panel" style="text-align: center; max-width: 450px; width: 100%;">
+                <h2 style="margin-bottom: 25px;">Painel de Controle</h2>
+                <div style="display: grid; gap: 20px;">
+                  <button class="btn primary" style="padding: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px; height: auto;" onclick="adminActiveTab = 'linktree'; renderApp();">
+                    <span style="font-size: 32px;">🔗</span>
+                    <strong style="font-size: 18px;">Gerenciar Linktree</strong>
+                    <small style="opacity: 0.7;">Editar links, perfil e vídeo de fundo</small>
+                  </button>
+                  <button class="btn primary" style="padding: 25px; background: rgba(167, 139, 250, 0.3); border-color: rgba(167, 139, 250, 0.5); display: flex; flex-direction: column; align-items: center; gap: 10px; height: auto;" onclick="adminActiveTab = 'series'; renderApp();">
+                    <span style="font-size: 32px;">📺</span>
+                    <strong style="font-size: 18px;">Gerenciar Séries</strong>
+                    <small style="opacity: 0.7;">Editar séries, episódios e capas</small>
+                  </button>
+                </div>
+                <div style="margin-top: 35px; display: grid; gap: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
+                   <a class="btn" href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Ver Site Público</a>
+                   <button class="btn" type="button" onclick="adminPassword = ''; renderApp();">Sair do Painel</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
         const itemsHtml = config.links
           .map((l, idx) => {
             const title = l.title && l.title.trim() ? l.title.trim() : `Link ${idx + 1}`;
@@ -1209,71 +1293,77 @@
           })
           .join("");
 
+        const isLinktree = adminActiveTab === "linktree";
+
         return `
           ${renderBackground(config)}
           <div class="admin-layout" style="position: relative; z-index: 1;">
             <div class="panel">
-              <h2>Editor</h2>
+              <div class="back-btn" id="backToMainBtn">⬅ Voltar ao Painel</div>
+              <h2>Editor - ${isLinktree ? "Linktree" : "Séries"}</h2>
               <p>As alterações ficam salvas no Supabase.</p>
 
-              <div class="grid">
-                <div class="field">
-                  <label>Vídeo de fundo (URL .mp4/.webm)</label>
-                  <input id="backgroundVideoUrl" type="url" value="${escapeHtml(config.backgroundVideoUrl || "")}" placeholder="https://.../video.mp4" />
-                  <div class="file-row" style="margin-top: 8px;">
-                    <input class="file-input" id="backgroundVideoFile" type="file" accept="video/mp4,video/webm,video/*" />
-                    <label class="btn" for="backgroundVideoFile">Subir vídeo</label>
-                  </div>
-                </div>
-                <div class="field">
-                  <label>Foto do perfil</label>
-                  <input id="profileImageUrl" type="url" value="${escapeHtml(config.profile.imageUrl)}" />
-                  <div class="file-row" style="margin-top: 8px;">
-                    <input class="file-input" id="profileImageFile" type="file" accept="image/*" />
-                    <label class="btn" for="profileImageFile">Subir imagem</label>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="field">
-                    <label>Nome</label>
-                    <input id="profileName" type="text" value="${escapeHtml(config.profile.name)}" />
-                  </div>
-                  <div class="field">
-                    <label>Cargo/Tag</label>
-                    <input id="profileRole" type="text" value="${escapeHtml(config.profile.role)}" />
-                  </div>
-                </div>
-                <div class="field">
-                  <label>Bio</label>
-                  <textarea id="profileBio">${escapeHtml(config.profile.bio)}</textarea>
-                </div>
-                <div class="field">
-                  <label>Rodapé</label>
-                  <input id="footerText" type="text" value="${escapeHtml(config.footerText)}" />
-                </div>
+              <div class="btns" style="margin: 20px 0;">
+                <button class="btn primary" type="button" id="saveBtn">Salvar Alterações</button>
+                ${isLinktree ? '<button class="btn" type="button" id="addLinkBtn">Adicionar Link</button>' : '<button class="btn" type="button" id="addSerieBtn">+ Nova Série</button>'}
+                <button class="btn" type="button" id="resetBtn">Resetar Tudo</button>
               </div>
 
-              <div class="btns">
-                <button class="btn primary" type="button" id="saveBtn">Salvar</button>
-                <button class="btn" type="button" id="addLinkBtn">Adicionar botão</button>
-                <button class="btn" type="button" id="resetBtn">Resetar</button>
-                <a class="btn" href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Ver público</a>
-                <button class="btn" type="button" id="logoutBtn">Sair</button>
-              </div>
+              ${
+                isLinktree
+                  ? `
+                <div class="grid">
+                  <div class="field">
+                    <label>Vídeo de fundo (URL .mp4/.webm)</label>
+                    <input id="backgroundVideoUrl" type="url" value="${escapeHtml(config.backgroundVideoUrl || "")}" placeholder="https://.../video.mp4" />
+                    <div class="file-row" style="margin-top: 8px;">
+                      <input class="file-input" id="backgroundVideoFile" type="file" accept="video/mp4,video/webm,video/*" />
+                      <label class="btn" for="backgroundVideoFile">Subir vídeo</label>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Foto do perfil</label>
+                    <input id="profileImageUrl" type="url" value="${escapeHtml(config.profile.imageUrl)}" />
+                    <div class="file-row" style="margin-top: 8px;">
+                      <input class="file-input" id="profileImageFile" type="file" accept="image/*" />
+                      <label class="btn" for="profileImageFile">Subir imagem</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label>Nome</label>
+                      <input id="profileName" type="text" value="${escapeHtml(config.profile.name)}" />
+                    </div>
+                    <div class="field">
+                      <label>Cargo/Tag</label>
+                      <input id="profileRole" type="text" value="${escapeHtml(config.profile.role)}" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Bio</label>
+                    <textarea id="profileBio">${escapeHtml(config.profile.bio)}</textarea>
+                  </div>
+                  <div class="field">
+                    <label>Rodapé</label>
+                    <input id="footerText" type="text" value="${escapeHtml(config.footerText)}" />
+                  </div>
+                </div>
 
-              <div class="panel">
-                <h2>Gerenciar Séries</h2>
+                <div class="items" id="items">
+                  ${itemsHtml}
+                </div>
+              `
+                  : `
                 <div id="admin-series-list"></div>
-                <button class="btn" type="button" id="addSerieBtn" style="margin-top: 10px; width: 100%;">+ Nova Série</button>
-              </div>
-
-              <div class="items" id="items">
-                ${itemsHtml}
-              </div>
+              `
+              }
             </div>
 
             <div class="panel">
-              <h2>Prévia</h2>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">Prévia</h2>
+                <div class="pill">${isLinktree ? "Visualização: Linktree" : "Visualização: Séries"}</div>
+              </div>
               <div id="preview"></div>
             </div>
           </div>
@@ -1333,11 +1423,31 @@
         if (backgroundInput instanceof HTMLInputElement) {
           next.backgroundVideoUrl = backgroundInput.value.trim();
         }
-        next.profile.imageUrl = document.getElementById("profileImageUrl").value.trim();
-        next.profile.name = document.getElementById("profileName").value.trim();
-        next.profile.role = document.getElementById("profileRole").value.trim();
-        next.profile.bio = document.getElementById("profileBio").value.trim();
-        next.footerText = document.getElementById("footerText").value.trim();
+
+        const profileImageUrl = document.getElementById("profileImageUrl");
+        if (profileImageUrl instanceof HTMLInputElement) {
+          next.profile.imageUrl = profileImageUrl.value.trim();
+        }
+
+        const profileName = document.getElementById("profileName");
+        if (profileName instanceof HTMLInputElement) {
+          next.profile.name = profileName.value.trim();
+        }
+
+        const profileRole = document.getElementById("profileRole");
+        if (profileRole instanceof HTMLInputElement) {
+          next.profile.role = profileRole.value.trim();
+        }
+
+        const profileBio = document.getElementById("profileBio");
+        if (profileBio instanceof HTMLTextAreaElement) {
+          next.profile.bio = profileBio.value.trim();
+        }
+
+        const footerText = document.getElementById("footerText");
+        if (footerText instanceof HTMLInputElement) {
+          next.footerText = footerText.value.trim();
+        }
 
         const fields = document.querySelectorAll("[data-field][data-index]");
         fields.forEach((el) => {
@@ -1376,49 +1486,69 @@
       function updatePreview(config) {
         const preview = document.getElementById("preview");
         if (!preview) return;
-        preview.innerHTML = renderPublic(config);
+        if (adminActiveTab === "series") {
+          preview.innerHTML = renderSeries(config);
+        } else {
+          preview.innerHTML = renderPublic(config);
+        }
       }
 
       function attachAdminEditorHandlers(config) {
         let state = normalizeConfig(config);
-        updatePreview(state);
+        const setupListener = (id, event, handler) => {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener(event, handler);
+        };
 
-        const previewRefresh = () => {
-          state = getEditorStateFromDOM(state);
+        updatePreview(state);
+        adminSeriesPreviewSelectedId = null;
+        window.__adminSeriesPreviewSelect = (id) => {
+          adminSeriesPreviewSelectedId = String(id || "");
+          updatePreview(state);
+        };
+        window.__adminSeriesPreviewBack = () => {
+          adminSeriesPreviewSelectedId = null;
           updatePreview(state);
         };
 
-        const bgInput = document.getElementById("backgroundVideoUrl");
-        if (bgInput) bgInput.addEventListener("input", previewRefresh);
-        const bgFile = document.getElementById("backgroundVideoFile");
-        if (bgFile) {
-          bgFile.addEventListener("change", async (e) => {
-            const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-            if (!file) return;
-            try {
-              if (!adminPassword) throw new Error("Sem senha");
-              const { ok, status, data } = await uploadBackgroundVideoFromFile(file);
-              if (!ok || !data || typeof data !== "object" || typeof data.url !== "string" || !data.url) {
-                const message =
-                  data && typeof data === "object" && "error" in data && typeof data.error === "string"
-                    ? data.error
-                    : `Falha ao subir vídeo. (status ${status})`;
-                throw new Error(message);
-              }
-              state = getEditorStateFromDOM(state);
-              state.backgroundVideoUrl = data.url;
-              appConfig = state;
-              configLoaded = true;
-              renderApp();
-            } catch (err) {
-              window.alert(err instanceof Error ? err.message : "Falha ao subir vídeo.");
-            } finally {
-              e.target.value = "";
+        const previewRefresh = () => {
+          state = getEditorStateFromDOM(state);
+          appConfig = state; // Sincroniza com o estado global para não perder dados ao renderApp()
+          updatePreview(state);
+        };
+
+        // Handlers de Navegação
+        setupListener("backToMainBtn", "click", () => {
+          adminActiveTab = "main";
+          renderApp();
+        });
+
+        // Handlers do Linktree
+        setupListener("backgroundVideoUrl", "input", previewRefresh);
+        setupListener("backgroundVideoFile", "change", async (e) => {
+          const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+          if (!file) return;
+          try {
+            if (!adminPassword) throw new Error("Sem senha");
+            const { ok, status, data } = await uploadBackgroundVideoFromFile(file);
+            if (!ok || !data || typeof data !== "object" || typeof data.url !== "string" || !data.url) {
+              const message = data?.error || `Falha ao subir vídeo. (status ${status})`;
+              throw new Error(message);
             }
-          });
-        }
-        document.getElementById("profileImageUrl").addEventListener("input", previewRefresh);
-        document.getElementById("profileImageFile").addEventListener("change", async (e) => {
+            state = getEditorStateFromDOM(state);
+            state.backgroundVideoUrl = data.url;
+            appConfig = state;
+            configLoaded = true;
+            renderApp();
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : "Falha ao subir vídeo.");
+          } finally {
+            e.target.value = "";
+          }
+        });
+
+        setupListener("profileImageUrl", "input", previewRefresh);
+        setupListener("profileImageFile", "change", async (e) => {
           const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
           if (!file) return;
           const dataUrl = await readFileAsDataUrl(file);
@@ -1429,58 +1559,58 @@
           renderApp();
           e.target.value = "";
         });
-        document.getElementById("profileName").addEventListener("input", previewRefresh);
-        document.getElementById("profileRole").addEventListener("input", previewRefresh);
-        document.getElementById("profileBio").addEventListener("input", previewRefresh);
-        document.getElementById("footerText").addEventListener("input", previewRefresh);
 
-        document.getElementById("items").addEventListener("input", previewRefresh);
-        document.getElementById("items").addEventListener("change", previewRefresh);
-        document.getElementById("items").addEventListener("change", (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLInputElement)) return;
-          if (target.getAttribute("data-field") !== "order") return;
-          state = getEditorStateFromDOM(state);
-          sortLinksInPlace(state.links);
-          renumberOrders(state.links);
-          appConfig = state;
-          configLoaded = true;
-          renderApp();
-        });
-        document.getElementById("items").addEventListener("change", async (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLInputElement)) return;
-          if (target.type !== "file") return;
-          if (target.getAttribute("data-action") !== "uploadIcon") return;
-          const idx = Number(target.getAttribute("data-index"));
-          if (!Number.isFinite(idx)) return;
-          const file = target.files && target.files[0] ? target.files[0] : null;
-          if (!file) return;
-          const dataUrl = await readFileAsDataUrl(file);
-          state = getEditorStateFromDOM(state);
-          if (!state.links[idx]) return;
-          state.links[idx].iconImageUrl = dataUrl;
-          appConfig = state;
-          configLoaded = true;
-          renderApp();
-          target.value = "";
-        });
+        setupListener("profileName", "input", previewRefresh);
+        setupListener("profileRole", "input", previewRefresh);
+        setupListener("profileBio", "input", previewRefresh);
+        setupListener("footerText", "input", previewRefresh);
 
-        document.getElementById("items").addEventListener("click", (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLElement)) return;
-          const action = target.getAttribute("data-action");
-          if (action !== "removeLink") return;
-          const idx = Number(target.getAttribute("data-index"));
-          if (!Number.isFinite(idx)) return;
-          state = getEditorStateFromDOM(state);
-          state.links.splice(idx, 1);
-          appConfig = state;
-          configLoaded = true;
-          renderApp();
-        });
+        const itemsEl = document.getElementById("items");
+        if (itemsEl) {
+          itemsEl.addEventListener("input", previewRefresh);
+          itemsEl.addEventListener("change", (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLInputElement)) return;
+            if (target.getAttribute("data-field") === "order") {
+              state = getEditorStateFromDOM(state);
+              sortLinksInPlace(state.links);
+              renumberOrders(state.links);
+              appConfig = state;
+              configLoaded = true;
+              renderApp();
+            } else if (target.type === "file" && target.getAttribute("data-action") === "uploadIcon") {
+              const idx = Number(target.getAttribute("data-index"));
+              if (!Number.isFinite(idx)) return;
+              const file = target.files && target.files[0] ? target.files[0] : null;
+              if (!file) return;
+              readFileAsDataUrl(file).then(dataUrl => {
+                state = getEditorStateFromDOM(state);
+                if (state.links[idx]) {
+                  state.links[idx].iconImageUrl = dataUrl;
+                  appConfig = state;
+                  configLoaded = true;
+                  renderApp();
+                }
+              });
+            }
+          });
+          itemsEl.addEventListener("click", (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLElement)) return;
+            const action = target.getAttribute("data-action");
+            if (action === "removeLink") {
+              const idx = Number(target.getAttribute("data-index"));
+              if (!Number.isFinite(idx)) return;
+              state = getEditorStateFromDOM(state);
+              state.links.splice(idx, 1);
+              appConfig = state;
+              configLoaded = true;
+              renderApp();
+            }
+          });
+        }
 
-        document.getElementById("addLinkBtn").addEventListener("click", () => {
+        setupListener("addLinkBtn", "click", () => {
           state = getEditorStateFromDOM(state);
           const maxOrder = state.links.reduce((acc, l) => Math.max(acc, Number(l.order) || 0), 0);
           const next = createEmptyLink();
@@ -1492,216 +1622,139 @@
           renderApp();
         });
 
-        document.getElementById("saveBtn").addEventListener("click", async () => {
-          state = getEditorStateFromDOM(state);
-          updatePreview(state);
-
-          const btn = document.getElementById("saveBtn");
-          if (btn instanceof HTMLButtonElement) {
-            btn.disabled = true;
-            btn.textContent = "Salvando...";
-          }
-
-          try {
-            if (!adminPassword) throw new Error("Sem senha");
-            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
-              method: "POST",
-              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
-            });
-            if (!ok || !data || data.ok !== true) {
-              const message =
-                data && typeof data === "object" && "error" in data && typeof data.error === "string"
-                  ? data.error
-                  : `Falha ao salvar no Supabase. (status ${status})`;
-              throw new Error(message);
-            }
-            appConfig = state;
-          } catch (err) {
-            window.alert(err instanceof Error ? err.message : "Falha ao salvar no Supabase.");
-          } finally {
-            if (btn instanceof HTMLButtonElement) {
-              btn.disabled = false;
-              btn.textContent = "Salvar";
-            }
-          }
-        });
-
-        document.getElementById("resetBtn").addEventListener("click", async () => {
-          state = normalizeConfig(defaultConfig);
-          updatePreview(state);
-          const btn = document.getElementById("resetBtn");
-          if (btn instanceof HTMLButtonElement) btn.disabled = true;
-
-          try {
-            if (!adminPassword) throw new Error("Sem senha");
-            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
-              method: "POST",
-              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
-            });
-            if (!ok || !data || data.ok !== true) {
-              const message =
-                data && typeof data === "object" && "error" in data && typeof data.error === "string"
-                  ? data.error
-                  : `Falha ao resetar no Supabase. (status ${status})`;
-              throw new Error(message);
-            }
-            appConfig = state;
-            renderApp();
-          } catch (err) {
-            window.alert(err instanceof Error ? err.message : "Falha ao resetar no Supabase.");
-          } finally {
-            if (btn instanceof HTMLButtonElement) btn.disabled = false;
-          }
-        });
-
-        document.getElementById("logoutBtn").addEventListener("click", () => {
-          adminPassword = "";
-          renderApp();
-        });
-
-        // Séries Admin
+        // Handlers de Séries
         const seriesList = document.getElementById("admin-series-list");
-        const renderAdminSeries = () => {
-          seriesList.innerHTML = state.series
-            .map(
-              (s, sIdx) => `
-            <div class="item" style="margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
-              <div class="row">
-                <div class="field">
-                  <label>Título da Série</label>
-                  <input type="text" data-serie-idx="${sIdx}" data-field="title" value="${escapeHtml(s.title)}" />
-                </div>
-                <div class="field">
-                  <label>Ícone</label>
-                  <input type="text" data-serie-idx="${sIdx}" data-field="icon" value="${escapeHtml(s.icon)}" />
-                </div>
-              </div>
-              <div class="field">
-                <label>Descrição</label>
-                <input type="text" data-serie-idx="${sIdx}" data-field="description" value="${escapeHtml(s.description)}" />
-              </div>
-              <div class="field">
-                <label>Capa da Série (URL)</label>
-                <input type="url" data-serie-idx="${sIdx}" data-field="coverUrl" value="${escapeHtml(s.coverUrl)}" />
-                <div class="file-row" style="margin-top: 8px;">
-                  <input class="file-input" type="file" id="serie-cover-${sIdx}" accept="image/*" data-action="uploadSerieCover" data-serie-idx="${sIdx}" />
-                  <label class="btn" for="serie-cover-${sIdx}">Subir Capa</label>
-                </div>
-              </div>
-              
-              <div style="margin-top: 15px;">
-                <label>Vídeos desta Série</label>
-                <div id="admin-videos-${sIdx}">
-                  ${s.videos
-                    .map(
-                      (v, vIdx) => `
-                    <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; margin-top: 10px;">
-                      <div class="row">
-                        <div class="field">
-                          <label>Título do Vídeo</label>
-                          <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-title" value="${escapeHtml(v.title)}" />
-                        </div>
-                        <div class="field">
-                          <label>Duração</label>
-                          <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-duration" value="${escapeHtml(v.duration)}" />
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label>URL do Vídeo</label>
-                        <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-url" value="${escapeHtml(v.url)}" />
-                      </div>
-                      <div class="field">
-                        <label>Thumbnail do Vídeo (URL)</label>
-                        <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-thumbUrl" value="${escapeHtml(v.thumbUrl)}" />
-                        <div class="file-row" style="margin-top: 8px;">
-                          <input class="file-input" type="file" id="video-thumb-${sIdx}-${vIdx}" accept="image/*" data-action="uploadVideoThumb" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" />
-                          <label class="btn" for="video-thumb-${sIdx}-${vIdx}">Subir Thumb</label>
-                        </div>
-                      </div>
-                      <button class="btn" style="background: #ef4444; margin-top: 10px;" data-action="removeVideo" data-serie-idx="${sIdx}" data-video-idx="${vIdx}">Remover Vídeo</button>
+        if (seriesList) {
+          const renderAdminSeries = () => {
+            seriesList.innerHTML = state.series
+              .map((s, sIdx) => `
+                <div class="item" style="margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                  <div class="row">
+                    <div class="field">
+                      <label>Título da Série</label>
+                      <input type="text" data-serie-idx="${sIdx}" data-field="title" value="${escapeHtml(s.title)}" />
                     </div>
-                  `,
-                    )
-                    .join("")}
+                    <div class="field">
+                      <label>Ícone</label>
+                      <input type="text" data-serie-idx="${sIdx}" data-field="icon" value="${escapeHtml(s.icon)}" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Descrição</label>
+                    <input type="text" data-serie-idx="${sIdx}" data-field="description" value="${escapeHtml(s.description)}" />
+                  </div>
+                  <div class="field">
+                    <label>Capa da Série (URL)</label>
+                    <input type="url" data-serie-idx="${sIdx}" data-field="coverUrl" value="${escapeHtml(s.coverUrl)}" />
+                    <div class="file-row" style="margin-top: 8px;">
+                      <input class="file-input" type="file" id="serie-cover-${sIdx}" accept="image/*" data-action="uploadSerieCover" data-serie-idx="${sIdx}" />
+                      <label class="btn" for="serie-cover-${sIdx}">Subir Capa</label>
+                    </div>
+                  </div>
+                  <div style="margin-top: 15px;">
+                    <label>Vídeos desta Série</label>
+                    <div id="admin-videos-${sIdx}">
+                      ${s.videos.map((v, vIdx) => `
+                        <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; margin-top: 10px;">
+                          <div class="row">
+                            <div class="field">
+                              <label>Título do Vídeo</label>
+                              <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-title" value="${escapeHtml(v.title)}" />
+                            </div>
+                            <div class="field">
+                              <label>Duração</label>
+                              <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-duration" value="${escapeHtml(v.duration)}" />
+                            </div>
+                          </div>
+                          <div class="field">
+                            <label>URL do Vídeo</label>
+                            <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-url" value="${escapeHtml(v.url)}" />
+                          </div>
+                          <div class="field">
+                            <label>Thumbnail do Vídeo (URL)</label>
+                            <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-thumbUrl" value="${escapeHtml(v.thumbUrl)}" />
+                            <div class="file-row" style="margin-top: 8px;">
+                              <input class="file-input" type="file" id="video-thumb-${sIdx}-${vIdx}" accept="image/*" data-action="uploadVideoThumb" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" />
+                              <label class="btn" for="video-thumb-${sIdx}-${vIdx}">Subir Thumb</label>
+                            </div>
+                          </div>
+                          <button class="btn" style="background: #ef4444; margin-top: 10px;" data-action="removeVideo" data-serie-idx="${sIdx}" data-video-idx="${vIdx}">Remover Vídeo</button>
+                        </div>
+                      `).join("")}
+                    </div>
+                    <button class="btn" style="margin-top: 10px; width: 100%;" data-action="addVideo" data-serie-idx="${sIdx}">+ Adicionar Vídeo</button>
+                  </div>
+                  <button class="btn" style="background: #ef4444; margin-top: 20px; width: 100%;" data-action="removeSerie" data-serie-idx="${sIdx}">Remover Série Completa</button>
                 </div>
-                <button class="btn" style="margin-top: 10px; width: 100%;" data-action="addVideo" data-serie-idx="${sIdx}">+ Adicionar Vídeo</button>
-              </div>
-              
-              <button class="btn" style="background: #ef4444; margin-top: 20px; width: 100%;" data-action="removeSerie" data-serie-idx="${sIdx}">Remover Série Completa</button>
-            </div>
-          `,
-            )
-            .join("");
-        };
+              `).join("");
+          };
 
-        renderAdminSeries();
+          renderAdminSeries();
 
-        seriesList.addEventListener("input", (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLInputElement)) return;
-          const sIdx = Number(target.getAttribute("data-serie-idx"));
-          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
-          const field = target.getAttribute("data-field");
+          seriesList.addEventListener("input", (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLInputElement)) return;
+            const sIdx = Number(target.getAttribute("data-serie-idx"));
+            const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+            const field = target.getAttribute("data-field");
 
-          if (vIdx !== null) {
-            if (field === "v-title") state.series[sIdx].videos[vIdx].title = target.value;
-            if (field === "v-duration") state.series[sIdx].videos[vIdx].duration = target.value;
-            if (field === "v-url") state.series[sIdx].videos[vIdx].url = target.value;
-            if (field === "v-thumbUrl") state.series[sIdx].videos[vIdx].thumbUrl = target.value;
-          } else {
-            if (field === "title") state.series[sIdx].title = target.value;
-            if (field === "icon") state.series[sIdx].icon = target.value;
-            if (field === "description") state.series[sIdx].description = target.value;
-            if (field === "coverUrl") state.series[sIdx].coverUrl = target.value;
-          }
-          previewRefresh();
-        });
+            if (vIdx !== null) {
+              if (field === "v-title") state.series[sIdx].videos[vIdx].title = target.value;
+              if (field === "v-duration") state.series[sIdx].videos[vIdx].duration = target.value;
+              if (field === "v-url") state.series[sIdx].videos[vIdx].url = target.value;
+              if (field === "v-thumbUrl") state.series[sIdx].videos[vIdx].thumbUrl = target.value;
+            } else {
+              if (field === "title") state.series[sIdx].title = target.value;
+              if (field === "icon") state.series[sIdx].icon = target.value;
+              if (field === "description") state.series[sIdx].description = target.value;
+              if (field === "coverUrl") state.series[sIdx].coverUrl = target.value;
+            }
+            previewRefresh();
+          });
 
-        seriesList.addEventListener("change", async (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLInputElement) || target.type !== "file") return;
-          const action = target.getAttribute("data-action");
-          const sIdx = Number(target.getAttribute("data-serie-idx"));
-          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+          seriesList.addEventListener("change", async (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLInputElement) || target.type !== "file") return;
+            const action = target.getAttribute("data-action");
+            const sIdx = Number(target.getAttribute("data-serie-idx"));
+            const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+            const file = target.files && target.files[0] ? target.files[0] : null;
+            if (!file) return;
 
-          const file = target.files && target.files[0] ? target.files[0] : null;
-          if (!file) return;
+            const dataUrl = await readFileAsDataUrl(file);
+            if (action === "uploadSerieCover") {
+              state.series[sIdx].coverUrl = dataUrl;
+            } else if (action === "uploadVideoThumb") {
+              state.series[sIdx].videos[vIdx].thumbUrl = dataUrl;
+            }
+            appConfig = state;
+            configLoaded = true;
+            renderApp();
+          });
 
-          const dataUrl = await readFileAsDataUrl(file);
-          if (action === "uploadSerieCover") {
-            state.series[sIdx].coverUrl = dataUrl;
-          } else if (action === "uploadVideoThumb") {
-            state.series[sIdx].videos[vIdx].thumbUrl = dataUrl;
-          }
+          seriesList.addEventListener("click", (e) => {
+            const target = e.target;
+            if (!(target instanceof HTMLElement)) return;
+            const action = target.getAttribute("data-action");
+            const sIdx = Number(target.getAttribute("data-serie-idx"));
+            const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
 
-          appConfig = state;
-          configLoaded = true;
-          renderApp();
-        });
-
-        seriesList.addEventListener("click", (e) => {
-          const target = e.target;
-          if (!(target instanceof HTMLElement)) return;
-          const action = target.getAttribute("data-action");
-          const sIdx = Number(target.getAttribute("data-serie-idx"));
-          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
-
-          if (action === "addVideo") {
-            state.series[sIdx].videos.push({ title: "Novo Vídeo", duration: "0:00", url: "https://", thumbUrl: "" });
-          } else if (action === "removeVideo") {
-            state.series[sIdx].videos.splice(vIdx, 1);
-          } else if (action === "removeSerie") {
-            if (confirm("Tem certeza que deseja remover esta série?")) {
+            if (action === "addVideo") {
+              state.series[sIdx].videos.push({ title: "Novo Vídeo", duration: "0:00", url: "https://", thumbUrl: "" });
+            } else if (action === "removeVideo") {
+              state.series[sIdx].videos.splice(vIdx, 1);
+            } else if (action === "removeSerie") {
+              if (!confirm("Tem certeza que deseja remover esta série?")) return;
               state.series.splice(sIdx, 1);
             } else return;
-          } else return;
 
-          appConfig = state;
-          configLoaded = true;
-          renderApp();
-        });
+            appConfig = state;
+            configLoaded = true;
+            renderApp();
+          });
+        }
 
-        document.getElementById("addSerieBtn").addEventListener("click", () => {
+        setupListener("addSerieBtn", "click", () => {
           state.series.push({
             id: String(Date.now()),
             title: "Nova Série",
@@ -1714,6 +1767,61 @@
           configLoaded = true;
           renderApp();
         });
+
+        // Handlers Gerais
+        setupListener("saveBtn", "click", async () => {
+          state = getEditorStateFromDOM(state);
+          appConfig = state;
+          updatePreview(state);
+          const btn = document.getElementById("saveBtn");
+          if (btn instanceof HTMLButtonElement) {
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
+          }
+          try {
+            if (!adminPassword) throw new Error("Sem senha");
+            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
+            });
+            if (!ok || !data || data.ok !== true) {
+              throw new Error(data?.error || `Falha ao salvar no Supabase. (status ${status})`);
+            }
+            window.alert("Configurações salvas com sucesso!");
+            renderApp();
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : "Falha ao salvar no Supabase.");
+          } finally {
+            if (btn instanceof HTMLButtonElement) {
+              btn.disabled = false;
+              btn.textContent = "Salvar Alterações";
+            }
+          }
+        });
+
+        setupListener("resetBtn", "click", async () => {
+          if (!confirm("Tem certeza que deseja resetar tudo? Isso apagará todas as suas personalizações.")) return;
+          state = normalizeConfig(defaultConfig);
+          updatePreview(state);
+          const btn = document.getElementById("resetBtn");
+          if (btn instanceof HTMLButtonElement) btn.disabled = true;
+          try {
+            if (!adminPassword) throw new Error("Sem senha");
+            const { ok, status, data } = await fetchJson(`${API_BASE}/admin/save`, {
+              method: "POST",
+              body: JSON.stringify({ username: ADMIN_USERNAME, password: adminPassword, config: state }),
+            });
+            if (!ok || !data || data.ok !== true) {
+              throw new Error(data?.error || `Falha ao resetar no Supabase. (status ${status})`);
+            }
+            appConfig = state;
+            renderApp();
+          } catch (err) {
+            window.alert(err instanceof Error ? err.message : "Falha ao resetar no Supabase.");
+          } finally {
+            if (btn instanceof HTMLButtonElement) btn.disabled = false;
+          }
+        });
       }
 
       function renderApp() {
@@ -1722,24 +1830,49 @@
         const config = appConfig;
 
         if (!isAdminRoute()) {
-          if (isSeriesRoute()) {
-            app.innerHTML = renderSeries(config);
-            return;
-          }
-
           if (!configLoaded) {
             app.innerHTML = `
               <div style="width: 100%; display: grid; place-items: center;">
                 <div class="container">
                   <div class="profile">
+                    <div class="loading-pokeball" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                        <defs>
+                          <radialGradient id="g" cx="40%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity=".35" />
+                            <stop offset="60%" stop-color="#ffffff" stop-opacity="0" />
+                          </radialGradient>
+                          <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ff6b6b" />
+                            <stop offset="100%" stop-color="#ef4444" />
+                          </linearGradient>
+                          <linearGradient id="gray" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#f8fafc" />
+                            <stop offset="100%" stop-color="#e5e7eb" />
+                          </linearGradient>
+                        </defs>
+                        <circle cx="64" cy="64" r="58" fill="url(#gray)" stroke="#000000" stroke-width="8" />
+                        <path d="M6 64a58 58 0 0 1 116 0" fill="url(#red)" />
+                        <rect x="6" y="60" width="116" height="8" fill="#000000" />
+                        <circle cx="64" cy="64" r="18" fill="#ffffff" stroke="#000000" stroke-width="8" />
+                        <circle cx="64" cy="64" r="8" fill="#cbd5e1" />
+                        <circle cx="64" cy="64" r="58" fill="url(#g)" />
+                      </svg>
+                    </div>
                     <h1>Carregando…</h1>
-                    <p>Buscando dados no Supabase.</p>
+                    <p>Carregando todos os meus links</p>
                   </div>
                 </div>
               </div>
             `;
             return;
           }
+
+          if (isSeriesRoute()) {
+            app.innerHTML = renderSeries(config);
+            return;
+          }
+
           app.innerHTML = renderPublic(config);
           return;
         }
