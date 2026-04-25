@@ -472,6 +472,14 @@
         align-items: center;
         justify-content: center;
         font-size: 24px;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .series-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .series-info {
@@ -519,6 +527,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+      }
+
+      .video-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .video-details h4 {
@@ -570,9 +587,10 @@
             title: "Dicas de Programação",
             description: "Aprenda truques e atalhos",
             icon: "💻",
+            coverUrl: "",
             videos: [
-              { title: "VS Code Setup", duration: "10:20", url: "#" },
-              { title: "Git para Iniciantes", duration: "15:45", url: "#" },
+              { title: "VS Code Setup", duration: "10:20", url: "#", thumbUrl: "" },
+              { title: "Git para Iniciantes", duration: "15:45", url: "#", thumbUrl: "" },
             ],
           },
           {
@@ -580,9 +598,10 @@
             title: "Vlogs de Viagem",
             description: "Conhecendo o mundo",
             icon: "✈️",
+            coverUrl: "",
             videos: [
-              { title: "Explorando o Japão", duration: "22:10", url: "#" },
-              { title: "Um dia em Paris", duration: "18:30", url: "#" },
+              { title: "Explorando o Japão", duration: "22:10", url: "#", thumbUrl: "" },
+              { title: "Um dia em Paris", duration: "18:30", url: "#", thumbUrl: "" },
             ],
           },
         ],
@@ -683,11 +702,13 @@
                   title: String(s.title || ""),
                   description: String(s.description || ""),
                   icon: String(s.icon || "📺"),
+                  coverUrl: String(s.coverUrl || ""),
                   videos: Array.isArray(s.videos)
                     ? s.videos.map((v) => ({
                         title: String(v.title || ""),
                         duration: String(v.duration || ""),
                         url: String(v.url || "#"),
+                        thumbUrl: String(v.thumbUrl || ""),
                       }))
                     : [],
                 }))
@@ -995,7 +1016,9 @@
             .map(
               (v) => `
             <a href="${escapeHtml(v.url)}" class="video-item" target="_blank">
-              <div class="video-thumb">▶</div>
+              <div class="video-thumb">
+                ${v.thumbUrl ? `<img src="${escapeHtml(v.thumbUrl)}" alt="" />` : "▶"}
+              </div>
               <div class="video-details">
                 <h4>${escapeHtml(v.title)}</h4>
                 <p>${escapeHtml(v.duration)}</p>
@@ -1006,12 +1029,17 @@
             .join("");
 
           return `
-            <div style="width: 100%; display: grid; place-items: center;">
+            ${renderBackground(config)}
+            <div style="width: 100%; display: grid; place-items: center; position: relative; z-index: 1;">
               <div class="container">
                 <div class="back-btn" onclick="navigateTo('/series')">⬅ Voltar para Séries</div>
                 <div class="profile">
-                  <div class="avatar-ball" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px;">
-                    ${escapeHtml(serie.icon)}
+                  <div class="avatar-ball" style="background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 40px; overflow: hidden;">
+                    ${
+                      serie.coverUrl
+                        ? `<img src="${escapeHtml(serie.coverUrl)}" alt="" style="width: 100%; height: 100%; object-fit: cover;" />`
+                        : escapeHtml(serie.icon)
+                    }
                   </div>
                   <h1>${escapeHtml(serie.title)}</h1>
                   <p>${escapeHtml(serie.description)}</p>
@@ -1028,7 +1056,9 @@
           .map(
             (s) => `
           <div class="series-card" onclick="navigateTo('/series?id=${s.id}')">
-            <div class="series-thumb">${escapeHtml(s.icon)}</div>
+            <div class="series-thumb">
+              ${s.coverUrl ? `<img src="${escapeHtml(s.coverUrl)}" alt="" />` : escapeHtml(s.icon)}
+            </div>
             <div class="series-info">
               <h4>${escapeHtml(s.title)}</h4>
               <p>${escapeHtml(s.description)}</p>
@@ -1039,7 +1069,8 @@
           .join("");
 
         return `
-          <div style="width: 100%; display: grid; place-items: center;">
+          ${renderBackground(config)}
+          <div style="width: 100%; display: grid; place-items: center; position: relative; z-index: 1;">
             <div class="container">
               <div class="back-btn" onclick="navigateTo('/')">⬅ Voltar ao Linktree</div>
               <div class="profile">
@@ -1054,9 +1085,26 @@
         `;
       }
 
+      function renderBackground(config) {
+        const backgroundVideoUrl =
+          config && typeof config === "object" && typeof config.backgroundVideoUrl === "string"
+            ? config.backgroundVideoUrl.trim()
+            : "";
+
+        return backgroundVideoUrl
+          ? `
+            <div class="bg-video" aria-hidden="true">
+              <video src="${escapeHtml(backgroundVideoUrl)}" autoplay muted loop playsinline preload="metadata"></video>
+              <div class="overlay"></div>
+            </div>
+          `
+          : "";
+      }
+
       function renderAdminGate() {
         return `
-          <div class="admin-layout">
+          ${renderBackground(config)}
+          <div class="admin-layout" style="position: relative; z-index: 1;">
             <div class="panel">
               <h2>Admin</h2>
               <p>Digite a senha para editar seus links.</p>
@@ -1162,7 +1210,8 @@
           .join("");
 
         return `
-          <div class="admin-layout">
+          ${renderBackground(config)}
+          <div class="admin-layout" style="position: relative; z-index: 1;">
             <div class="panel">
               <h2>Editor</h2>
               <p>As alterações ficam salvas no Supabase.</p>
@@ -1210,6 +1259,12 @@
                 <button class="btn" type="button" id="resetBtn">Resetar</button>
                 <a class="btn" href="/" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">Ver público</a>
                 <button class="btn" type="button" id="logoutBtn">Sair</button>
+              </div>
+
+              <div class="panel">
+                <h2>Gerenciar Séries</h2>
+                <div id="admin-series-list"></div>
+                <button class="btn" type="button" id="addSerieBtn" style="margin-top: 10px; width: 100%;">+ Nova Série</button>
               </div>
 
               <div class="items" id="items">
@@ -1291,6 +1346,28 @@
           if (!Number.isFinite(idx) || idx < 0 || idx >= next.links.length) return;
           if (!field) return;
           next.links[idx][field] = el.value;
+        });
+
+        const seriesFields = document.querySelectorAll("[data-field][data-serie-idx]");
+        seriesFields.forEach((el) => {
+          const sIdx = Number(el.getAttribute("data-serie-idx"));
+          const vIdx = el.hasAttribute("data-video-idx") ? Number(el.getAttribute("data-video-idx")) : null;
+          const field = el.getAttribute("data-field");
+
+          if (!Number.isFinite(sIdx) || sIdx < 0 || sIdx >= next.series.length) return;
+
+          if (vIdx !== null) {
+            if (!next.series[sIdx].videos[vIdx]) return;
+            if (field === "v-title") next.series[sIdx].videos[vIdx].title = el.value;
+            if (field === "v-duration") next.series[sIdx].videos[vIdx].duration = el.value;
+            if (field === "v-url") next.series[sIdx].videos[vIdx].url = el.value;
+            if (field === "v-thumbUrl") next.series[sIdx].videos[vIdx].thumbUrl = el.value;
+          } else {
+            if (field === "title") next.series[sIdx].title = el.value;
+            if (field === "icon") next.series[sIdx].icon = el.value;
+            if (field === "description") next.series[sIdx].description = el.value;
+            if (field === "coverUrl") next.series[sIdx].coverUrl = el.value;
+          }
         });
 
         return normalizeConfig(next);
@@ -1479,6 +1556,162 @@
 
         document.getElementById("logoutBtn").addEventListener("click", () => {
           adminPassword = "";
+          renderApp();
+        });
+
+        // Séries Admin
+        const seriesList = document.getElementById("admin-series-list");
+        const renderAdminSeries = () => {
+          seriesList.innerHTML = state.series
+            .map(
+              (s, sIdx) => `
+            <div class="item" style="margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+              <div class="row">
+                <div class="field">
+                  <label>Título da Série</label>
+                  <input type="text" data-serie-idx="${sIdx}" data-field="title" value="${escapeHtml(s.title)}" />
+                </div>
+                <div class="field">
+                  <label>Ícone</label>
+                  <input type="text" data-serie-idx="${sIdx}" data-field="icon" value="${escapeHtml(s.icon)}" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Descrição</label>
+                <input type="text" data-serie-idx="${sIdx}" data-field="description" value="${escapeHtml(s.description)}" />
+              </div>
+              <div class="field">
+                <label>Capa da Série (URL)</label>
+                <input type="url" data-serie-idx="${sIdx}" data-field="coverUrl" value="${escapeHtml(s.coverUrl)}" />
+                <div class="file-row" style="margin-top: 8px;">
+                  <input class="file-input" type="file" id="serie-cover-${sIdx}" accept="image/*" data-action="uploadSerieCover" data-serie-idx="${sIdx}" />
+                  <label class="btn" for="serie-cover-${sIdx}">Subir Capa</label>
+                </div>
+              </div>
+              
+              <div style="margin-top: 15px;">
+                <label>Vídeos desta Série</label>
+                <div id="admin-videos-${sIdx}">
+                  ${s.videos
+                    .map(
+                      (v, vIdx) => `
+                    <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px; margin-top: 10px;">
+                      <div class="row">
+                        <div class="field">
+                          <label>Título do Vídeo</label>
+                          <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-title" value="${escapeHtml(v.title)}" />
+                        </div>
+                        <div class="field">
+                          <label>Duração</label>
+                          <input type="text" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-duration" value="${escapeHtml(v.duration)}" />
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label>URL do Vídeo</label>
+                        <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-url" value="${escapeHtml(v.url)}" />
+                      </div>
+                      <div class="field">
+                        <label>Thumbnail do Vídeo (URL)</label>
+                        <input type="url" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" data-field="v-thumbUrl" value="${escapeHtml(v.thumbUrl)}" />
+                        <div class="file-row" style="margin-top: 8px;">
+                          <input class="file-input" type="file" id="video-thumb-${sIdx}-${vIdx}" accept="image/*" data-action="uploadVideoThumb" data-serie-idx="${sIdx}" data-video-idx="${vIdx}" />
+                          <label class="btn" for="video-thumb-${sIdx}-${vIdx}">Subir Thumb</label>
+                        </div>
+                      </div>
+                      <button class="btn" style="background: #ef4444; margin-top: 10px;" data-action="removeVideo" data-serie-idx="${sIdx}" data-video-idx="${vIdx}">Remover Vídeo</button>
+                    </div>
+                  `,
+                    )
+                    .join("")}
+                </div>
+                <button class="btn" style="margin-top: 10px; width: 100%;" data-action="addVideo" data-serie-idx="${sIdx}">+ Adicionar Vídeo</button>
+              </div>
+              
+              <button class="btn" style="background: #ef4444; margin-top: 20px; width: 100%;" data-action="removeSerie" data-serie-idx="${sIdx}">Remover Série Completa</button>
+            </div>
+          `,
+            )
+            .join("");
+        };
+
+        renderAdminSeries();
+
+        seriesList.addEventListener("input", (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLInputElement)) return;
+          const sIdx = Number(target.getAttribute("data-serie-idx"));
+          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+          const field = target.getAttribute("data-field");
+
+          if (vIdx !== null) {
+            if (field === "v-title") state.series[sIdx].videos[vIdx].title = target.value;
+            if (field === "v-duration") state.series[sIdx].videos[vIdx].duration = target.value;
+            if (field === "v-url") state.series[sIdx].videos[vIdx].url = target.value;
+            if (field === "v-thumbUrl") state.series[sIdx].videos[vIdx].thumbUrl = target.value;
+          } else {
+            if (field === "title") state.series[sIdx].title = target.value;
+            if (field === "icon") state.series[sIdx].icon = target.value;
+            if (field === "description") state.series[sIdx].description = target.value;
+            if (field === "coverUrl") state.series[sIdx].coverUrl = target.value;
+          }
+          previewRefresh();
+        });
+
+        seriesList.addEventListener("change", async (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLInputElement) || target.type !== "file") return;
+          const action = target.getAttribute("data-action");
+          const sIdx = Number(target.getAttribute("data-serie-idx"));
+          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+
+          const file = target.files && target.files[0] ? target.files[0] : null;
+          if (!file) return;
+
+          const dataUrl = await readFileAsDataUrl(file);
+          if (action === "uploadSerieCover") {
+            state.series[sIdx].coverUrl = dataUrl;
+          } else if (action === "uploadVideoThumb") {
+            state.series[sIdx].videos[vIdx].thumbUrl = dataUrl;
+          }
+
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+        });
+
+        seriesList.addEventListener("click", (e) => {
+          const target = e.target;
+          if (!(target instanceof HTMLElement)) return;
+          const action = target.getAttribute("data-action");
+          const sIdx = Number(target.getAttribute("data-serie-idx"));
+          const vIdx = target.hasAttribute("data-video-idx") ? Number(target.getAttribute("data-video-idx")) : null;
+
+          if (action === "addVideo") {
+            state.series[sIdx].videos.push({ title: "Novo Vídeo", duration: "0:00", url: "https://", thumbUrl: "" });
+          } else if (action === "removeVideo") {
+            state.series[sIdx].videos.splice(vIdx, 1);
+          } else if (action === "removeSerie") {
+            if (confirm("Tem certeza que deseja remover esta série?")) {
+              state.series.splice(sIdx, 1);
+            } else return;
+          } else return;
+
+          appConfig = state;
+          configLoaded = true;
+          renderApp();
+        });
+
+        document.getElementById("addSerieBtn").addEventListener("click", () => {
+          state.series.push({
+            id: String(Date.now()),
+            title: "Nova Série",
+            description: "Descrição da série",
+            icon: "📺",
+            coverUrl: "",
+            videos: [],
+          });
+          appConfig = state;
+          configLoaded = true;
           renderApp();
         });
       }
