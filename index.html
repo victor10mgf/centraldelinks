@@ -212,6 +212,76 @@
         background: rgba(255, 255, 255, 0.15);
       }
 
+      /* Efeito de destaque RGB (borda animada passando pelas laterais) */
+      .link.rgb {
+        position: relative;
+        z-index: 0;
+        border-color: transparent;
+      }
+
+      .link.rgb::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 2px;
+        background: linear-gradient(
+          90deg,
+          #ff0040,
+          #ff8a00,
+          #ffe600,
+          #14ff72,
+          #00e5ff,
+          #2a6bff,
+          #b14bff,
+          #ff0040
+        );
+        background-size: 300% 100%;
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: rgbFlow 4s linear infinite;
+        pointer-events: none;
+      }
+
+      .link.rgb::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        background: linear-gradient(
+          90deg,
+          #ff0040,
+          #ff8a00,
+          #ffe600,
+          #14ff72,
+          #00e5ff,
+          #2a6bff,
+          #b14bff,
+          #ff0040
+        );
+        background-size: 300% 100%;
+        filter: blur(11px);
+        opacity: 0.5;
+        animation: rgbFlow 4s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      @keyframes rgbFlow {
+        to {
+          background-position: 300% 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .link.rgb::before,
+        .link.rgb::after {
+          animation: none;
+        }
+      }
+
       .left {
         display: flex;
         align-items: center;
@@ -936,42 +1006,69 @@
         return map[v] || "#9333ea";
       }
 
+      // Identifica o card "Grupo de promoção" (por título/subtítulo ou link do WhatsApp)
+      // para destacá-lo: vai para o topo da lista e ganha a borda RGB animada.
+      function isPromoLink(link) {
+        const text = `${link && link.title ? link.title : ""} ${link && link.subtitle ? link.subtitle : ""}`.toLowerCase();
+        const href = (link && link.href ? link.href : "").toLowerCase();
+        return /promo|grupo/.test(text) || /wa\.me|whatsapp|chat\.whatsapp/.test(href);
+      }
+
+      function renderLinkCard(link, withRgb) {
+        const href = link.href && link.href.trim() ? link.href.trim() : "#";
+        const icon = link.icon && link.icon.trim() ? link.icon.trim() : "🔗";
+        const iconImageUrl =
+          typeof link.iconImageUrl === "string" && link.iconImageUrl.trim()
+            ? link.iconImageUrl.trim()
+            : "";
+        const color = link.color && link.color.trim() ? link.color.trim() : "purple";
+        const title = link.title && link.title.trim() ? link.title.trim() : "Link";
+        const subtitle = link.subtitle && link.subtitle.trim() ? link.subtitle.trim() : "";
+        const iconHtml = iconImageUrl
+          ? `<img src="${escapeHtml(iconImageUrl)}" alt="" />`
+          : escapeHtml(icon);
+        const iconClass = isHexColor(color) ? "" : ` ${escapeHtml(color)}`;
+        const iconStyle = isHexColor(color) ? ` style="background: ${escapeHtml(color)};"` : "";
+        const linkClass = withRgb ? "link rgb" : "link";
+
+        return `
+          <a href="${escapeHtml(href)}" class="${linkClass}" target="${href.startsWith("http") ? "_blank" : "_self"}" rel="noreferrer">
+            <div class="left">
+              <div class="icon${iconClass}"${iconStyle}>${iconHtml}</div>
+              <div class="text">
+                <h3>${escapeHtml(title)}</h3>
+                <p>${escapeHtml(subtitle)}</p>
+              </div>
+            </div>
+            <span aria-hidden="true">➜</span>
+          </a>
+        `;
+      }
+
       function renderPublic(config) {
-        const linksForRender = config.links
+        const sortedLinks = config.links
           .slice()
           .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
 
-        const linksHtml = linksForRender
-          .map((link) => {
-            const href = link.href && link.href.trim() ? link.href.trim() : "#";
-            const icon = link.icon && link.icon.trim() ? link.icon.trim() : "🔗";
-            const iconImageUrl =
-              typeof link.iconImageUrl === "string" && link.iconImageUrl.trim()
-                ? link.iconImageUrl.trim()
-                : "";
-            const color = link.color && link.color.trim() ? link.color.trim() : "purple";
-            const title = link.title && link.title.trim() ? link.title.trim() : "Link";
-            const subtitle = link.subtitle && link.subtitle.trim() ? link.subtitle.trim() : "";
-            const iconHtml = iconImageUrl
-              ? `<img src="${escapeHtml(iconImageUrl)}" alt="" />`
-              : escapeHtml(icon);
-            const iconClass = isHexColor(color) ? "" : ` ${escapeHtml(color)}`;
-            const iconStyle = isHexColor(color) ? ` style="background: ${escapeHtml(color)};"` : "";
+        // O card "Grupo de promoção" vai para o topo (acima até do Séries) com a borda RGB.
+        const promoLink = sortedLinks.find(isPromoLink) || null;
+        const otherLinks = sortedLinks.filter((link) => link !== promoLink);
 
-            return `
-              <a href="${escapeHtml(href)}" class="link" target="${href.startsWith("http") ? "_blank" : "_self"}" rel="noreferrer">
-                <div class="left">
-                  <div class="icon${iconClass}"${iconStyle}>${iconHtml}</div>
-                  <div class="text">
-                    <h3>${escapeHtml(title)}</h3>
-                    <p>${escapeHtml(subtitle)}</p>
-                  </div>
-                </div>
-                <span aria-hidden="true">➜</span>
-              </a>
-            `;
-          })
-          .join("");
+        const promoHtml = promoLink ? renderLinkCard(promoLink, true) : "";
+        const otherLinksHtml = otherLinks.map((link) => renderLinkCard(link, false)).join("");
+
+        const seriesCardHtml = `
+          <a href="javascript:void(0)" onclick="navigateTo('/series')" class="link" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167, 139, 250, 0.4);">
+            <div class="left">
+              <div class="icon purple">📺</div>
+              <div class="text">
+                <h3>Séries do Canal</h3>
+                <p>Assista às nossas séries exclusivas</p>
+              </div>
+            </div>
+            <span aria-hidden="true">➜</span>
+          </a>
+        `;
 
         const backgroundVideoUrl =
           config && typeof config === "object" && typeof config.backgroundVideoUrl === "string"
@@ -1016,19 +1113,10 @@
                 <span class="text-tag">${escapeHtml(config.profile.role)}</span>
                 <p class="bio-tag">${escapeHtml(config.profile.bio)}</p>
               </div>
-              
-              <a href="javascript:void(0)" onclick="navigateTo('/series')" class="link" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167, 139, 250, 0.4);">
-                <div class="left">
-                  <div class="icon purple">📺</div>
-                  <div class="text">
-                    <h3>Séries do Canal</h3>
-                    <p>Assista às nossas séries exclusivas</p>
-                  </div>
-                </div>
-                <span aria-hidden="true">➜</span>
-              </a>
 
-              ${linksHtml}
+              ${promoHtml}
+              ${seriesCardHtml}
+              ${otherLinksHtml}
               <footer>${escapeHtml(config.footerText)}</footer>
             </div>
           </div>
