@@ -10,13 +10,28 @@
     />
     <link rel="preconnect" href="https://xwcmpgvhtryhykqjqzbe.functions.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://xwcmpgvhtryhykqjqzbe.functions.supabase.co" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
     <style>
+      @font-face {
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url("/fonts/poppins-300.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("/fonts/poppins-400.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("/fonts/poppins-600.woff2") format("woff2");
+      }
       * {
         margin: 0;
         padding: 0;
@@ -899,6 +914,18 @@
       }
 
       async function loadPublicConfigFromServer() {
+        try {
+          const localRes = await fetch("/config-cache.json?_=" + Date.now());
+          if (localRes.ok) {
+            const data = await localRes.json();
+            if (data && data.config) {
+              appConfig = normalizeConfig(data.config);
+              configLoaded = true;
+              saveCachedConfig(data.config);
+              return;
+            }
+          }
+        } catch {}
         const { ok, data } = await fetchJson(`${API_BASE}/public`, { method: "GET" });
         if (!ok || !data || typeof data !== "object") throw new Error("Falha ao carregar dados");
         appConfig = normalizeConfig(data.config);
